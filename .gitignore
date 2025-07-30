@@ -1,0 +1,91 @@
+# ──────────────────────────────────────
+# Node.js / Express / Tsoa
+# ──────────────────────────────────────
+node_modules/
+dist/
+build/
+dist-ssr/
+*.local
+.env
+.env.*
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# TypeScript
+*.tsbuildinfo
+
+# Tsoa generated files
+src/routes.ts
+src/swagger.json
+
+# ──────────────────────────────────────
+# React + Vite
+# ──────────────────────────────────────
+.vite/
+.cache/
+
+# ──────────────────────────────────────
+# Docker
+# ──────────────────────────────────────
+docker-compose.override.yml
+docker-volumes/
+secrets/
+/run/secrets/*
+
+# ──────────────────────────────────────
+# Git Hooks (Husky)
+# ──────────────────────────────────────
+.husky/*
+!.husky/pre-commit  # ← Si quieres versionar este hook, mantenlo
+
+# ──────────────────────────────────────
+# SonarQube
+# ──────────────────────────────────────
+.sonar/
+.scannerwork/
+
+# ──────────────────────────────────────
+# Testing
+# ──────────────────────────────────────
+coverage/
+nyc_output/
+jest-output/
+test-results/
+
+# ──────────────────────────────────────
+# ESLint / Prettier / Lint-staged
+# ──────────────────────────────────────
+.eslintcache
+
+# ──────────────────────────────────────
+# CI / GitHub Actions / Misc
+# ──────────────────────────────────────
+*.pid
+*.seed
+*.tgz
+*.swp
+.turbo/
+
+# ──────────────────────────────────────
+# Editor & IDE config
+# ──────────────────────────────────────
+.idea/
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ──────────────────────────────────────
+# Otros temporales
+# ──────────────────────────────────────
+tmp/
+temp/
