@@ -4,20 +4,32 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "prepare": "husky"
+    "dev": "pnpm run --filter client --filter api run dev",
+    "dev:api": "pnpm --filter api run dev",
+    "dev:client": "pnpm --filter client run dev",
+    "build": "pnpm run --filter client --filter api run build",
+    "build:api": "pnpm --filter api run build",
+    "build:client": "pnpm --filter client run build",
+    "prepare": "husky init",
+    "lint:api": "eslint apps/api --config apps/api/eslint.config.js",
+    "lint:client": "eslint apps/client --config apps/client/eslint.config.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.13.1",
   "devDependencies": {
+    "eslint": "^9.32.0",
     "husky": "^9.1.7",
-    "lint-staged": "^16.1.2"
+    "lint-staged": "^16.1.2",
+    "prettier": "^3.6.2"
   },
   "lint-staged": {
-    "*.{js,ts,tsx}": [
-      "eslint --fix"
+    "apps/api/**/*.{ts,tsx,js}": [
+      "eslint --config apps/api/eslint.config.mjs --fix"
+    ],
+    "apps/client/**/*.{ts,tsx,js}": [
+      "eslint --config apps/client/eslint.config.mjs --fix"
     ]
   }
 }
