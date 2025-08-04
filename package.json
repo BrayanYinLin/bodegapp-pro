@@ -10,7 +10,7 @@
     "build": "pnpm run --filter client --filter api run build",
     "build:api": "pnpm --filter api run build",
     "build:client": "pnpm --filter client run build",
-    "prepare": "husky init",
+    "prepare": "husky",
     "lint:api": "eslint apps/api --config apps/api/eslint.config.js",
     "lint:client": "eslint apps/client --config apps/client/eslint.config.js"
   },
