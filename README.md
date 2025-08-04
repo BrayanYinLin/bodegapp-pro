@@ -1,4 +1,4 @@
-# ShopZen: Sistema de Gestión de Inventario
+# Sistema de Gestión de Inventario
 
 ## 1. Introducción al Diseño del Sistema
 
