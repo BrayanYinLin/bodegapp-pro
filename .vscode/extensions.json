@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "ms-ossdata.vscode-pgsql",
+    "esbenp.prettier-vscode",
+    "bradlc.vscode-tailwindcss",
+    "rangav.vscode-thunder-client",
+    "dbaeumer.vscode-eslint",
+  ]
+}

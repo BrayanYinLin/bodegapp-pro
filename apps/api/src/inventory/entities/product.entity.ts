@@ -16,7 +16,7 @@ class Product {
   @Column({ type: 'varchar', length: 100, unique: true })
   name!: string
 
-  @Column({ type: 'number' })
+  @Column({ type: 'int' })
   quantity!: number
 
   @Column({ type: 'boolean', default: true })
