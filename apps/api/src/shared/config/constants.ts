@@ -1,0 +1,16 @@
+export const ERROR_NAMES = {
+  NOT_FOUND: 'NOT_FOUND_ERROR',
+  VALIDATION: 'VALIDATION_ERROR',
+  AUTHENTICATION: 'AUTHENTICATION_ERROR',
+  INSERT_FAILED: 'INSERT_FAILED_ERROR'
+} as const
+
+export const ERROR_HTTP_CODES = {
+  NOT_FOUND: 404,
+  VALIDATION: 400,
+  AUTHENTICATION: 401,
+  INSERT_FAILED: 500
+} as const
+
+export type Code = (typeof ERROR_NAMES)[keyof typeof ERROR_NAMES]
+export type HttpCode = (typeof ERROR_HTTP_CODES)[keyof typeof ERROR_HTTP_CODES]
