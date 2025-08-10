@@ -5,15 +5,13 @@ export const handleError = async (
   err: Error,
   req: Request,
   res: Response
-): Promise<void> => {
+): Promise<Response | void> => {
   if (err instanceof AppError) {
-    res.status(err.httpCode).json({
+    return res.status(Number(err.httpCode)).json({
       status: err.httpCode,
       message: err.message,
       path: req.path
     })
-
-    return
   }
 
   // if (err instanceof errors.JWTInvalid) {
@@ -24,8 +22,9 @@ export const handleError = async (
   //   return
   // }
 
-  res.status(500).json({
+  return res.status(500).json({
     status: 'error',
-    message: 'Internal Server Error'
+    message: 'Internal Server Error',
+    path: req.path
   })
 }

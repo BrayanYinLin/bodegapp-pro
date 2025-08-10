@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn
+} from 'typeorm'
+import { Permission } from './permission.entity'
 
 @Entity()
 class Role {
@@ -6,10 +13,14 @@ class Role {
   id!: string
 
   @Column({ type: 'varchar', length: 100, unique: true })
-  description!: string
+  name!: string
 
   @Column({ type: 'boolean', default: false })
   state: boolean = false
+
+  @ManyToMany(() => Permission, (permission) => permission.roles)
+  @JoinTable()
+  permissions!: Permission[]
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt?: Date

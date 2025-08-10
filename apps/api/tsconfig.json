@@ -31,10 +31,15 @@
     // "moduleResolution": "node10",                     /* Specify how TypeScript looks up a file from a given module specifier. */
     "baseUrl": "./",                                  /* Specify the base directory to resolve non-relative module names. */
     "paths": {
+      "@sales": ["./src/sales"],
       "@sales/*": ["./src/sales/*"],
+      "@inventory": ["./src/inventory"],
       "@inventory/*": ["./src/inventory/*"],
+      "@auth": ["./src/auth"],
       "@auth/*": ["./src/auth/*"],
+      "@shared": ["./src/shared"],
       "@shared/*": ["./src/shared/*"],
+      "@root": ["./src"],
       "@root/*": ["./src/*"]
     },                                      /* Specify a set of entries that re-map imports to additional lookup locations. */
     // "rootDirs": [],                                   /* Allow multiple folders to be treated as one when resolving modules. */
@@ -116,5 +121,5 @@
     // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
     "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
   },
-  "exclude": ["eslint.config.mjs"]
+  "exclude": ["eslint.config.mjs", "vitest.config.mts"]
 }
