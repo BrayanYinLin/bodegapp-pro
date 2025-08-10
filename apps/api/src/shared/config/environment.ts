@@ -10,5 +10,6 @@ export const {
   DB_HOST: env_host_db,
   DB_PORT: env_port_app,
   JWT_SECRET: env_jwt_secret,
-  NODE_ENV: env_node_env
+  NODE_ENV: env_node_env,
+  BCRYPT_SALT_ROUNDS: env_bcrypt_salt_rounds
 } = process.env

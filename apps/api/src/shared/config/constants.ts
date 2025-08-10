@@ -1,16 +1,35 @@
-export const ERROR_NAMES = {
+const ERROR_NAMES = {
   NOT_FOUND: 'NOT_FOUND_ERROR',
   VALIDATION: 'VALIDATION_ERROR',
   AUTHENTICATION: 'AUTHENTICATION_ERROR',
-  INSERT_FAILED: 'INSERT_FAILED_ERROR'
+  INTERNAL: 'INTERNAL_APP_ERROR'
 } as const
 
-export const ERROR_HTTP_CODES = {
+const ERROR_HTTP_CODES = {
   NOT_FOUND: 404,
   VALIDATION: 400,
   AUTHENTICATION: 401,
-  INSERT_FAILED: 500
+  INTERNAL_ERROR: 500
 } as const
 
-export type Code = (typeof ERROR_NAMES)[keyof typeof ERROR_NAMES]
-export type HttpCode = (typeof ERROR_HTTP_CODES)[keyof typeof ERROR_HTTP_CODES]
+const RATE_LIMITER_PARAMS = {
+  WINDOW_TIME: 15 * 60 * 1000,
+  REQUEST_LIMIT: 100
+}
+
+const TOKEN_PARAMS = {
+  AT_DURATION: 60 * 60, //  Una hora
+  RT_DURATION: 60 * 60 * 24 * 15 //  15 Dias
+}
+
+type Code = (typeof ERROR_NAMES)[keyof typeof ERROR_NAMES]
+type HttpCode = (typeof ERROR_HTTP_CODES)[keyof typeof ERROR_HTTP_CODES]
+
+export {
+  ERROR_NAMES,
+  ERROR_HTTP_CODES,
+  RATE_LIMITER_PARAMS,
+  TOKEN_PARAMS,
+  Code,
+  HttpCode
+}

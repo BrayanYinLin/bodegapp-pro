@@ -30,20 +30,29 @@
  */
 
 import { Code, HttpCode } from '@shared/config/constants'
+import { ZodError } from 'zod'
 
 type ErrorParams = {
   code: Code
   httpCode: HttpCode
   message: string
   isOperational: boolean
+  details?: ZodError | unknown
 }
 
 class AppError extends Error {
   public readonly code: Code
   public readonly httpCode: HttpCode
   public readonly isOperational: boolean
+  public readonly details?: ZodError | unknown
 
-  constructor({ code, httpCode, message, isOperational }: ErrorParams) {
+  constructor({
+    code,
+    httpCode,
+    message,
+    isOperational,
+    details
+  }: ErrorParams) {
     super(message)
 
     Object.setPrototypeOf(this, new.target.prototype)
@@ -51,6 +60,7 @@ class AppError extends Error {
     this.code = code
     this.httpCode = httpCode
     this.isOperational = isOperational
+    this.details = details
 
     Error.captureStackTrace(this)
   }
