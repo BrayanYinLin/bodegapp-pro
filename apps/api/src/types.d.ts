@@ -1,14 +1,23 @@
 import { CreateUserDto, LoginUserDto } from './auth/entities/dtos/user.dto'
 import { Request, Response } from 'express'
+import { Profile } from 'passport-google-oauth20'
 
-type AuthTokens = {
+interface AuthTokens {
   access_token: string
   refresh_token: string
+}
+
+declare global {
+  namespace Express {
+    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+    interface User extends Profile {}
+  }
 }
 
 interface AuthService {
   signup(user: CreateUserDto): Promise<AuthTokens>
   signin(user: LoginUserDto): Promise<AuthTokens>
+  callbackGoogle(profile: Profile): Promise<AuthTokens>
 }
 
 interface AuthController {
@@ -18,6 +27,12 @@ interface AuthController {
     next: NextFunction
   ): Promise<Response | void>
   signin(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void>
+  logout(req: Request, res: Response): Promise<Response>
+  callback(
     req: Request,
     res: Response,
     next: NextFunction

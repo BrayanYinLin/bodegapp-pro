@@ -5,7 +5,7 @@ import { AppError } from '@shared/utils/error-factory'
 import { sign } from 'jsonwebtoken'
 import { randomUUID } from 'node:crypto'
 
-type UserId = Pick<User, 'id'>
+export type UserId = Pick<User, 'id'>
 
 const generateAccessToken = ({ id }: UserId) => {
   if (!env_jwt_secret) {

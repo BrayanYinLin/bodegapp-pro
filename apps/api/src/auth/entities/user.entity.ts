@@ -20,7 +20,7 @@ class User {
   @Column({ type: 'varchar', length: 100, unique: true })
   email!: string
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   password?: string
 
   @ManyToOne(() => AuthProvider, { eager: true })

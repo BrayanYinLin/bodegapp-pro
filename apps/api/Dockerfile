@@ -3,7 +3,7 @@
 # En esta etapa, instalamos todas las dependencias (incluidas las de desarrollo)
 # y compilamos el código TypeScript a JavaScript.
 
-FROM node:20-slim AS builder
+FROM node:22-slim AS builder
 
 # Establecer el directorio de trabajo
 WORKDIR /usr/src/app
@@ -33,7 +33,7 @@ RUN pnpm --filter api run build
 # En esta etapa, creamos la imagen final. Copiamos solo los artefactos
 # necesarios de la etapa de 'builder', resultando en una imagen mucho más pequeña.
 
-FROM node:20-slim
+FROM node:22-slim
 
 # Establecer el directorio de trabajo
 WORKDIR /usr/src/app

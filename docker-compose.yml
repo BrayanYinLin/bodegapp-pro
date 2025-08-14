@@ -1,4 +1,5 @@
 services:
+   # Base de datos de proyecto
    db_inventory_bodegapp:
     image: postgres
     container_name: db_inventory_bodegapp
@@ -10,18 +11,36 @@ services:
     ports:
        - "5432:5432"
     volumes:
-         - postgres_data:/var/lib/postgresql/data
+       - postgres_data:/var/lib/postgresql/data
+  
+   # Contenedor para analizar estaticamente el codigo
+   sonarqube:
+    image: sonarqube:community
+    container_name: sonarqube
+    ports:
+      - "9000:9000"
+    environment:
+      SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+    restart: unless-stopped
 
-  # cache_inventory_bodegapp:
-  #   image: redis:7-alpine
-  #   container_name: cache_inventory_bodegapp
-  #   restart: always
-  #   ports:
-  #     - "6379:6379"
-  #   command: redis-server --requirepass PsYsXm6C75j3ZYBrPApzqcTMz16Jkw
-  #   volumes:
-  #     - redis_data:/data
+   # Contenedor para cachear las respuestas
+   cache_inventory_bodegapp:
+    redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
 
 volumes:
   postgres_data:
-  # redis_data:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_logs:
+  redis_data:

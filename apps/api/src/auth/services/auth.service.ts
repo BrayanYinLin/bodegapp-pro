@@ -11,10 +11,12 @@ import {
   generateRefreshToken
 } from '@auth/lib/generate-tokens'
 import { AuthService, AuthTokens } from '@root/types'
+import { ERROR_HTTP_CODES, ERROR_NAMES } from '@shared/config/constants'
 import { env_bcrypt_salt_rounds } from '@shared/config/environment'
 import { AppDataSource } from '@shared/database/data-source'
 import { AppError } from '@shared/utils/error-factory'
 import { hash, compare } from 'bcrypt'
+import { Profile } from 'passport'
 
 class AuthServiceImpl implements AuthService {
   async signin(user: LoginUserDto): Promise<AuthTokens> {
@@ -71,6 +73,7 @@ class AuthServiceImpl implements AuthService {
       refresh_token
     }
   }
+
   async signup(user: CreateUserDto): Promise<AuthTokens> {
     const repository = AppDataSource.getRepository(User)
     const AuthProviderRepository = AppDataSource.getRepository(AuthProvider)
@@ -119,6 +122,74 @@ class AuthServiceImpl implements AuthService {
 
     const refresh_token = generateRefreshToken({
       id: newUser.id
+    })
+
+    return {
+      access_token,
+      refresh_token
+    }
+  }
+
+  async callbackGoogle(profile: Profile): Promise<AuthTokens> {
+    const userRepository = AppDataSource.getRepository(User)
+    const providerRepository = AppDataSource.getRepository(AuthProvider)
+
+    if (!profile.emails) {
+      throw new AppError({
+        code: ERROR_NAMES.NOT_FOUND,
+        httpCode: ERROR_HTTP_CODES.NOT_FOUND,
+        message: 'Email was not found',
+        isOperational: false
+      })
+    }
+
+    const email = profile?.emails[0].value
+
+    const existingUser = await userRepository.findOne({
+      where: {
+        email
+      }
+    })
+
+    const googleProvider = await providerRepository.findOne({
+      where: {
+        name: 'Google'
+      }
+    })
+
+    if (!googleProvider) {
+      throw new AppError({
+        code: ERROR_NAMES.NOT_FOUND,
+        httpCode: ERROR_HTTP_CODES.NOT_FOUND,
+        message: 'Google provider not found',
+        isOperational: false
+      })
+    }
+
+    let userRecord = existingUser
+    if (!existingUser) {
+      userRecord = await userRepository.save({
+        name: profile.displayName,
+        email: profile.emails[0].value,
+        provider: googleProvider
+      })
+    }
+
+    if (!userRecord) {
+      throw new AppError({
+        code: ERROR_NAMES.NOT_FOUND,
+        httpCode: ERROR_HTTP_CODES.NOT_FOUND,
+        message: 'User not found',
+        isOperational: false
+      })
+    }
+
+    const access_token = generateAccessToken({
+      id: userRecord.id
+    })
+
+    const refresh_token = generateRefreshToken({
+      id: userRecord.id
     })
 
     return {
