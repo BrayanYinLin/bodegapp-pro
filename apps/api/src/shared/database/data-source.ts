@@ -10,9 +10,9 @@ import {
 import { User } from '@auth/entities/user.entity'
 import { Role } from '@auth/entities/role.entity'
 import { AuthProvider } from '@auth/entities/auth-provider.entity'
-import { Category } from '@inventory/entities/category.entity'
+import { Category } from '@products/entities/category.entity'
 import { Inventory } from '@inventory/entities/inventory.entity'
-import { Product } from '@inventory/entities/product.entity'
+import { Product } from '@products/entities/product.entity'
 import { Permission } from '@auth/entities/permission.entity'
 import { UserInventory } from '@auth/entities/user-inventory.entity'
 
