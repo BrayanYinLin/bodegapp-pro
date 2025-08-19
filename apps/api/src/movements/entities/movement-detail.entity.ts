@@ -1,18 +1,15 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
 
 @Entity()
-class Category {
+export class MovementDetail {
   @PrimaryGeneratedColumn('uuid')
   id!: string
 
-  @Column({ type: 'varchar', length: 100, unique: true })
-  name!: string
+  @Column({ type: 'decimal', precision: 10, scale: 2 })
+  price!: number
 
-  @Column({ type: 'text', nullable: true })
-  description?: string
-
-  @Column({ type: 'boolean', default: true })
-  state!: boolean
+  @Column({ type: 'integer' })
+  quantity!: number
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt?: Date
@@ -24,5 +21,3 @@ class Category {
   })
   updatedAt?: Date
 }
-
-export { Category }

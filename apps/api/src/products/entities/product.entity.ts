@@ -5,7 +5,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn
 } from 'typeorm'
-import { Inventory } from '@inventory/entities/inventory.entity'
+import { Inventory } from '@root/inventories/entities/inventory.entity'
 import { Category } from '@products/entities/category.entity'
 
 @Entity()

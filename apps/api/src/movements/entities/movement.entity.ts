@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
 
 @Entity()
-class Sale {
+class Movement {
   @PrimaryGeneratedColumn('uuid')
   id!: string
 
@@ -22,4 +22,4 @@ class Sale {
   updatedAt?: Date
 }
 
-export { Sale }
+export { Movement }
