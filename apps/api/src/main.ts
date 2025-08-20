@@ -6,6 +6,7 @@ import { middlewareError } from '@shared/middleware/error-middleware'
 import { authenticationRouter } from '@auth/routers/auth.router'
 import helmet from 'helmet'
 import { limiter } from '@shared/middleware/rate-limiter-middleware'
+import { inventoryRouter } from '@inventories/routers/inventory.router'
 
 const app = express()
 
@@ -18,6 +19,7 @@ app.use(cors())
 app.use(helmet())
 
 app.use('/api/v1/auth', authenticationRouter)
+app.use('/api/v1/inventory', inventoryRouter)
 app.use(middlewareError)
 
 export { app }

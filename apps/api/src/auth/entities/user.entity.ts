@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn
 } from 'typeorm'
 import { AuthProvider } from './auth-provider.entity'
-import { UserInventory } from './user-inventory.entity'
+import { Member } from '@members/entities/member.entity'
 
 @Entity()
 class User {
@@ -27,10 +27,10 @@ class User {
   @JoinColumn({ name: 'provider_id' })
   provider!: AuthProvider
 
-  @OneToMany(() => UserInventory, (userInventory) => userInventory.user, {
+  @OneToMany(() => Member, (member) => member.user, {
     nullable: true
   })
-  userInventories?: UserInventory[]
+  members?: Member[]
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt?: Date

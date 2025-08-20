@@ -11,10 +11,13 @@ import { User } from '@auth/entities/user.entity'
 import { Role } from '@auth/entities/role.entity'
 import { AuthProvider } from '@auth/entities/auth-provider.entity'
 import { Category } from '@products/entities/category.entity'
-import { Inventory } from '@inventory/entities/inventory.entity'
+import { Inventory } from '@inventories/entities/inventory.entity'
 import { Product } from '@products/entities/product.entity'
 import { Permission } from '@auth/entities/permission.entity'
-import { UserInventory } from '@auth/entities/user-inventory.entity'
+import { Member } from '@members/entities/member.entity'
+import { Invitation } from '@invitations/entities/invitation.entity'
+import { Movement } from '@movements/entities/movement.entity'
+import { MovementDetail } from '@movements/entities/movement-detail.entity'
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
@@ -25,12 +28,16 @@ export const AppDataSource = new DataSource({
   database: env_db,
   synchronize: env_node_env === 'development',
   logging: env_node_env !== 'development',
+  dropSchema: env_node_env === 'development',
   entities: [
     User,
     Role,
     AuthProvider,
     Permission,
-    UserInventory,
+    Member,
+    Invitation,
+    Movement,
+    MovementDetail,
     Category,
     Inventory,
     Product
