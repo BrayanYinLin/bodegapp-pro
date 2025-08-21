@@ -8,6 +8,21 @@ import { NextFunction, Request, Response } from 'express'
 export class InventoryCtrl implements InventoryController {
   constructor(private readonly service = new InventoryServiceImpl()) {}
 
+  async findAllByUser(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> {
+    try {
+      const sub = decodeUser(req.cookies.access_token)
+      const inventories = await this.service.findAllByUser({ sub })
+
+      return res.json(inventories)
+    } catch (e) {
+      next(e)
+    }
+  }
+
   async create(
     req: Request,
     res: Response,

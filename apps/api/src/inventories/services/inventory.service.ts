@@ -1,9 +1,13 @@
 import { Role } from '@auth/entities/role.entity'
 import { User } from '@auth/entities/user.entity'
-import { ResponseInventoryDto } from '@inventories/entities/dtos/inventory.dto'
+import {
+  ResponseInventoryDto,
+  ResponseInventorySchema
+} from '@inventories/entities/dtos/inventory.dto'
 import { Inventory } from '@inventories/entities/inventory.entity'
 import {
   CreateInventoryParam,
+  InventoryParam,
   InventoryService,
   InventoryTokens
 } from '@inventories/inventory'
@@ -17,6 +21,7 @@ import { ERROR_HTTP_CODES, ERROR_NAMES } from '@shared/config/constants'
 import { AppDataSource } from '@shared/database/data-source'
 import { ROLES } from '@shared/database/role.seed'
 import { AppError } from '@shared/utils/error-factory'
+import { formatErrorMessages } from '@shared/utils/format-error-messages'
 
 export class InventoryServiceImpl implements InventoryService {
   constructor(
@@ -26,8 +31,51 @@ export class InventoryServiceImpl implements InventoryService {
     private readonly roleRepository = AppDataSource.getRepository(Role)
   ) {}
 
-  async findAll(): Promise<ResponseInventoryDto[]> {
-    throw new Error('Method not implemented.')
+  async findAllByUser({
+    sub
+  }: InventoryParam): Promise<ResponseInventoryDto[]> {
+    const user = await this.userRepository.findOne({
+      where: {
+        id: sub
+      }
+    })
+
+    if (!user) {
+      throw new AppError({
+        code: ERROR_NAMES.NOT_FOUND,
+        httpCode: ERROR_HTTP_CODES.NOT_FOUND,
+        message: 'User not found.',
+        isOperational: true
+      })
+    }
+
+    const members = await this.memberRepository.find({
+      relations: ['user', 'inventory'],
+      where: {
+        user: {
+          id: sub
+        }
+      }
+    })
+
+    const mapped = members.map(({ inventory }) => {
+      const { success, data, error } =
+        ResponseInventorySchema.safeParse(inventory)
+
+      if (!success || error) {
+        throw new AppError({
+          code: ERROR_NAMES.VALIDATION,
+          httpCode: ERROR_HTTP_CODES.VALIDATION,
+          message: 'Inventory mapping failed',
+          isOperational: true,
+          details: formatErrorMessages(error)
+        })
+      }
+
+      return data
+    })
+
+    return mapped
   }
 
   async create({ dto, sub }: CreateInventoryParam): Promise<InventoryTokens> {

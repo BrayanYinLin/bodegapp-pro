@@ -12,7 +12,7 @@ export class Member {
   user!: User
 
   @ManyToOne(() => Inventory, (inventory) => inventory.members)
-  inventory!: User
+  inventory!: Inventory
 
   @ManyToOne(() => Role, (role) => role.members)
   role!: Role

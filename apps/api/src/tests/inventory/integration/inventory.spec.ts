@@ -6,6 +6,7 @@ import express from 'express'
 import request from 'supertest'
 import { passportMock } from '@root/tests/mocks/passport'
 import { faker } from '@faker-js/faker'
+import { ResponseInventorySchema } from '@inventories/entities/dtos/inventory.dto'
 
 const sampleUser = {
   name: faker.person.firstName(),
@@ -49,5 +50,14 @@ describe('Inventory tests', () => {
     expect(cookie).toBeDefined()
     expect(cookie[0]).toMatch(/access_inventory_/)
     expect(cookie[1]).toMatch(/refresh_inventory_/)
+  })
+
+  it('should return all inventories by user logged', async () => {
+    const response = await agent.get('/api/v1/inventory')
+
+    expect(response.body).toBeTypeOf('object')
+    expect(() =>
+      ResponseInventorySchema.array().parse(response.body)
+    ).not.toThrow()
   })
 })

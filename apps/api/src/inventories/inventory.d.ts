@@ -14,12 +14,21 @@ export type CreateInventoryParam = {
   sub: string
 }
 
+export type InventoryParam = {
+  sub: string
+}
+
 export interface InventoryService {
-  findAll(): Promise<ResponseInventoryDto[]>
-  create({ dto, user }: CreateInventoryParam): Promise<InventoryTokens>
+  findAllByUser({ sub }: InventoryParam): Promise<ResponseInventoryDto[]>
+  create({ dto, sub }: CreateInventoryParam): Promise<InventoryTokens>
 }
 
 export interface InventoryController {
+  findAllByUser(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void>
   create(
     req: Request,
     res: Response,
