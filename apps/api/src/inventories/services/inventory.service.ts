@@ -1,9 +1,6 @@
 import { Role } from '@auth/entities/role.entity'
 import { User } from '@auth/entities/user.entity'
-import {
-  ResponseInventoryDto,
-  CreateInventorySchema
-} from '@inventories/entities/dtos/inventory.dto'
+import { ResponseInventoryDto } from '@inventories/entities/dtos/inventory.dto'
 import { Inventory } from '@inventories/entities/inventory.entity'
 import {
   CreateInventoryParam,
@@ -34,18 +31,6 @@ export class InventoryServiceImpl implements InventoryService {
   }
 
   async create({ dto, sub }: CreateInventoryParam): Promise<InventoryTokens> {
-    const { success, data, error } = CreateInventorySchema.safeParse(dto)
-
-    if (!success || !data) {
-      throw new AppError({
-        code: ERROR_NAMES.VALIDATION,
-        httpCode: ERROR_HTTP_CODES.VALIDATION,
-        message: 'Inventory validation failed.',
-        isOperational: true,
-        details: error
-      })
-    }
-
     //  Busca el usuario
     const user = await this.userRepository.findOne({
       where: {
@@ -80,8 +65,8 @@ export class InventoryServiceImpl implements InventoryService {
 
     //  Crea el inventario
     const inventory = await this.repository.save({
-      name: data.name,
-      description: data.description
+      name: dto.name,
+      description: dto.description
     })
 
     //  Lo vincula con el usuario
