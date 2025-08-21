@@ -1,15 +1,15 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
 
 @Entity()
-class Sale {
+export class MovementDetail {
   @PrimaryGeneratedColumn('uuid')
   id!: string
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
-  total!: number
+  price!: number
 
-  @Column({ type: 'timestamp' })
-  date!: Date
+  @Column({ type: 'integer' })
+  quantity!: number
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt?: Date
@@ -21,5 +21,3 @@ class Sale {
   })
   updatedAt?: Date
 }
-
-export { Sale }

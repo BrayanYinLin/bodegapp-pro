@@ -10,7 +10,8 @@ export const handleError = async (
     return res.status(Number(err.httpCode)).json({
       status: err.httpCode,
       message: err.message,
-      path: req.path
+      path: req.path,
+      details: err.details
     })
   }
 

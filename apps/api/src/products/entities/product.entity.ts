@@ -5,8 +5,8 @@ import {
   OneToOne,
   PrimaryGeneratedColumn
 } from 'typeorm'
-import { Inventory } from './inventory.entity'
-import { Category } from './category.entity'
+import { Inventory } from '@root/inventories/entities/inventory.entity'
+import { Category } from '@products/entities/category.entity'
 
 @Entity()
 class Product {
