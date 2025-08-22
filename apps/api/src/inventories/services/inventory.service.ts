@@ -7,15 +7,15 @@ import {
 import { Inventory } from '@inventories/entities/inventory.entity'
 import {
   CreateInventoryParam,
+  InventoryAndUserParam,
   InventoryParam,
   InventoryService,
-  InventoryTokens
+  InventoryWithTokens
 } from '@inventories/inventory'
 import {
   generateInventoryAccessToken,
   generateInventoryRefreshToken
 } from '@inventories/lib/generate-tokens'
-import { sanitizeInventoryName } from '@inventories/lib/sanitize-names'
 import { Member } from '@members/entities/member.entity'
 import { ERROR_HTTP_CODES, ERROR_NAMES } from '@shared/config/constants'
 import { AppDataSource } from '@shared/database/data-source'
@@ -78,7 +78,10 @@ export class InventoryServiceImpl implements InventoryService {
     return mapped
   }
 
-  async create({ dto, sub }: CreateInventoryParam): Promise<InventoryTokens> {
+  async create({
+    dto,
+    sub
+  }: CreateInventoryParam): Promise<InventoryWithTokens> {
     //  Busca el usuario
     const user = await this.userRepository.findOne({
       where: {
@@ -137,13 +140,85 @@ export class InventoryServiceImpl implements InventoryService {
       role: member.role
     })
 
-    //  Crea las propiedades dinamicas
-    const accessKey = `access_inventory_${sanitizeInventoryName(inventory.name)}`
-    const refreshKey = `refresh_inventory_${sanitizeInventoryName(inventory.name)}`
+    const { data, success, error } =
+      ResponseInventorySchema.safeParse(inventory)
+
+    if (!success || error) {
+      throw new AppError({
+        code: ERROR_NAMES.VALIDATION,
+        httpCode: ERROR_HTTP_CODES.VALIDATION,
+        message: 'API could not validate inventory created',
+        isOperational: true,
+        details: formatErrorMessages(error)
+      })
+    }
 
     return {
-      [accessKey]: access,
-      [refreshKey]: refresh
+      inventory: data,
+      tokens: {
+        access_inventory: access,
+        refresh_inventory: refresh
+      }
+    }
+  }
+
+  async findById({
+    sub,
+    id
+  }: InventoryAndUserParam): Promise<InventoryWithTokens> {
+    const member = await this.memberRepository.findOne({
+      relations: ['inventory', 'role', 'user'],
+      where: {
+        user: {
+          id: sub
+        },
+        inventory: {
+          id
+        }
+      }
+    })
+
+    if (!member) {
+      throw new AppError({
+        code: ERROR_NAMES.NOT_FOUND,
+        httpCode: ERROR_HTTP_CODES.NOT_FOUND,
+        message: 'Member not found.',
+        isOperational: true
+      })
+    }
+
+    const access = generateInventoryAccessToken({
+      sub: member.id,
+      inventory: member.inventory,
+      role: member.role
+    })
+
+    const refresh = generateInventoryRefreshToken({
+      sub: member.id,
+      inventory: member.inventory,
+      role: member.role
+    })
+
+    const { success, data, error } = ResponseInventorySchema.safeParse(
+      member.inventory
+    )
+
+    if (!success || error) {
+      throw new AppError({
+        code: ERROR_NAMES.VALIDATION,
+        httpCode: ERROR_HTTP_CODES.VALIDATION,
+        message: 'Inventory mapping failed',
+        isOperational: true,
+        details: formatErrorMessages(error)
+      })
+    }
+
+    return {
+      inventory: data,
+      tokens: {
+        access_inventory: access,
+        refresh_inventory: refresh
+      }
     }
   }
 }

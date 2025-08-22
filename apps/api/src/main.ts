@@ -8,6 +8,7 @@ import helmet from 'helmet'
 import { limiter } from '@shared/middleware/rate-limiter-middleware'
 import { inventoryRouter } from '@inventories/routers/inventory.router'
 import { logger } from '@shared/utils/logger'
+import { ROUTES } from '@shared/config/constants'
 
 const app = express()
 
@@ -24,8 +25,8 @@ app.use(cors())
 app.use(limiter)
 app.use(helmet())
 
-app.use('/api/v1/auth', authenticationRouter)
-app.use('/api/v1/inventory', inventoryRouter)
+app.use(ROUTES.AUTH, authenticationRouter)
+app.use(ROUTES.INVENTORY, inventoryRouter)
 app.use(middlewareError)
 
 export { app }

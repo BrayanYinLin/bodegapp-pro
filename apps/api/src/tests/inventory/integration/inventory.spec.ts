@@ -1,12 +1,16 @@
 import { AppDataSource } from '@shared/database/data-source'
 import { authSeed } from '@shared/database/provider.seed'
 import { seedAdmin } from '@shared/database/role.seed'
-import { describe, beforeAll, it, expect, vi } from 'vitest'
+import { describe, beforeAll, it, expect, vi, afterAll } from 'vitest'
 import express from 'express'
 import request from 'supertest'
 import { passportMock } from '@root/tests/mocks/passport'
 import { faker } from '@faker-js/faker'
-import { ResponseInventorySchema } from '@inventories/entities/dtos/inventory.dto'
+import {
+  ResponseInventoryDto,
+  ResponseInventorySchema
+} from '@inventories/entities/dtos/inventory.dto'
+import { ROUTES } from '@shared/config/constants'
 
 const sampleUser = {
   name: faker.person.firstName(),
@@ -18,6 +22,8 @@ const sampleInventory = {
   name: faker.company.name(),
   description: faker.company.catchPhrase()
 }
+
+const inventories: ResponseInventoryDto[] = []
 
 vi.mock('passport', () => {
   return {
@@ -42,22 +48,54 @@ describe('Inventory tests', () => {
     await agent.post('/api/v1/auth/signup').send(sampleUser)
   })
 
+  afterAll(async () => {
+    await AppDataSource.dropDatabase() // 👈 borra todo
+    await AppDataSource.synchronize() // 👈 vuelve a crear tablas
+    await AppDataSource.destroy()
+  })
+
   it('should create a new inventory', async () => {
-    const response = await agent.post('/api/v1/inventory').send(sampleInventory)
+    const response = await agent.post(ROUTES.INVENTORY).send(sampleInventory)
 
     const cookie = response.headers['set-cookie']
 
     expect(cookie).toBeDefined()
-    expect(cookie[0]).toMatch(/access_inventory_/)
-    expect(cookie[1]).toMatch(/refresh_inventory_/)
+    expect(cookie[0]).toMatch(/access_inventory/)
+    expect(cookie[1]).toMatch(/refresh_inventory/)
   })
 
   it('should return all inventories by user logged', async () => {
-    const response = await agent.get('/api/v1/inventory')
+    const response = await agent.get(ROUTES.INVENTORY)
 
     expect(response.body).toBeTypeOf('object')
     expect(() =>
       ResponseInventorySchema.array().parse(response.body)
     ).not.toThrow()
+
+    inventories.push(...response.body)
   })
+
+  it('should return inventory data and access tokens', async () => {
+    console.info(inventories[0].id)
+
+    const response = await agent.get(
+      ROUTES.INVENTORY.concat('/', inventories[0].id)
+    )
+
+    const cookie = response.headers['set-cookie']
+
+    expect(() => ResponseInventorySchema.parse(response.body)).not.toThrow()
+    expect(cookie).toBeDefined()
+    expect(cookie[0]).toMatch(/access_inventory/)
+    expect(cookie[1]).toMatch(/refresh_inventory/)
+  })
+
+  // it('should update basic data about an inventory', async () => {
+  //   const { status } = await agent.put('/api/v1/inventory').send({
+  //     name: faker.company.name(),
+  //     description: faker.company.catchPhrase()
+  //   })
+
+  //   expect(status).toBe(200)
+  // })
 })

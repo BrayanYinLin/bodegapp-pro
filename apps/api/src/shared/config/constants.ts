@@ -41,6 +41,11 @@ const COOKIE_PARAMS: CookieOptions = {
   secure: env_node_env === 'PRODUCTION'
 } as const
 
+const ROUTES = {
+  AUTH: '/api/v1/auth',
+  INVENTORY: '/api/v1/inventory'
+} as const
+
 type Code = (typeof ERROR_NAMES)[keyof typeof ERROR_NAMES]
 type HttpCode = (typeof ERROR_HTTP_CODES)[keyof typeof ERROR_HTTP_CODES]
 
@@ -49,6 +54,7 @@ export {
   ERROR_HTTP_CODES,
   RATE_LIMITER_PARAMS,
   TOKEN_PARAMS,
+  ROUTES,
   COOKIE_PARAMS,
   Code,
   HttpCode

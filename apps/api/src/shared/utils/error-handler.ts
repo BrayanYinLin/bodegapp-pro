@@ -26,6 +26,7 @@ export const handleError = async (
   return res.status(500).json({
     status: 'error',
     message: 'Internal Server Error',
-    path: req.path
+    path: req.path,
+    details: err.message ?? err.name
   })
 }

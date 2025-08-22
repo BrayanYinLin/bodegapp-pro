@@ -5,8 +5,8 @@ import {
 import { NextFunction, Request, Response } from 'express'
 
 export interface InventoryTokens {
-  [key: string]: string
-  [key: string]: string
+  access_inventory: string
+  refresh_inventory: string
 }
 
 export type CreateInventoryParam = {
@@ -18,13 +18,29 @@ export type InventoryParam = {
   sub: string
 }
 
+export type InventoryWithTokens = {
+  inventory: ResponseInventoryDto
+  tokens: InventoryTokens
+}
+
+export type InventoryAndUserParam = {
+  sub: string
+  id: string
+}
+
 export interface InventoryService {
   findAllByUser({ sub }: InventoryParam): Promise<ResponseInventoryDto[]>
-  create({ dto, sub }: CreateInventoryParam): Promise<InventoryTokens>
+  findById({ sub, id }: InventoryAndUserParam): Promise<InventoryWithTokens>
+  create({ dto, sub }: CreateInventoryParam): Promise<InventoryWithTokens>
 }
 
 export interface InventoryController {
   findAllByUser(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void>
+  findById(
     req: Request,
     res: Response,
     next: NextFunction
