@@ -23,7 +23,7 @@ export const decodeAccess = (token: string) => {
     })
   }
 
-  const { inventory, role, sub } = verify(
+  const { inventory, role, sub, member } = verify(
     token,
     env_jwt_secret
   ) as JwtPayload as MemberPayloadDto
@@ -37,5 +37,5 @@ export const decodeAccess = (token: string) => {
     })
   }
 
-  return { inventory, role, sub }
+  return { inventory, role, sub, member }
 }

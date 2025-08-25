@@ -131,13 +131,19 @@ export class InventoryServiceImpl implements InventoryService {
 
     //  Genera los tokens de acceso y refresco
     const access = generateInventoryAccessToken({
-      sub: member.id,
+      sub: user.id,
+      member: {
+        id: member.id
+      },
       inventory: member.inventory,
       role: member.role
     })
 
     const refresh = generateInventoryRefreshToken({
-      sub: member.id,
+      sub: user.id,
+      member: {
+        id: member.id
+      },
       inventory: member.inventory,
       role: member.role
     })
@@ -216,7 +222,10 @@ export class InventoryServiceImpl implements InventoryService {
     }
 
     const access = generateInventoryAccessToken({
-      sub: member.id,
+      sub: member.user.id,
+      member: {
+        id: member.id
+      },
       inventory: member.inventory,
       role: {
         name: member.role.name,
@@ -225,7 +234,10 @@ export class InventoryServiceImpl implements InventoryService {
     })
 
     const refresh = generateInventoryRefreshToken({
-      sub: member.id,
+      sub: member.user.id,
+      member: {
+        id: member.id
+      },
       inventory: member.inventory,
       role: member.role
     })

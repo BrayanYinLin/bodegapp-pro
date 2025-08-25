@@ -8,6 +8,7 @@ import {
 } from 'typeorm'
 import { AuthProvider } from './auth-provider.entity'
 import { Member } from '@members/entities/member.entity'
+import { Invitation } from '@invitations/entities/invitation.entity'
 
 @Entity()
 class User {
@@ -31,6 +32,9 @@ class User {
     nullable: true
   })
   members?: Member[]
+
+  @OneToMany(() => Invitation, (invitation) => invitation.inventory)
+  invitations?: Invitation[]
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt?: Date

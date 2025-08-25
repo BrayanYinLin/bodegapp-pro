@@ -1,18 +1,24 @@
+import { faker } from '@faker-js/faker'
 import { AppDataSource } from '@shared/database/data-source'
 import { authSeed } from '@shared/database/provider.seed'
 import { seedAdmin } from '@shared/database/role.seed'
-import { describe, beforeAll, it, expect, vi, afterAll } from 'vitest'
+import { beforeAll, describe, it, expect } from 'vitest'
 import express from 'express'
 import request from 'supertest'
-import { passportMock } from '@root/tests/mocks/passport'
-import { faker } from '@faker-js/faker'
+import { ROUTES } from '@shared/config/constants'
+import { User } from '@auth/entities/user.entity'
 import {
   ResponseInventoryDto,
   ResponseInventorySchema
 } from '@inventories/entities/dtos/inventory.dto'
-import { ROUTES } from '@shared/config/constants'
 
-const sampleUser = {
+const sampleAdmin = {
+  name: faker.person.firstName(),
+  email: faker.internet.email(),
+  password: faker.internet.password({ length: 10 })
+}
+
+const sampleGuest = {
   name: faker.person.firstName(),
   email: faker.internet.email(),
   password: faker.internet.password({ length: 10 })
@@ -23,17 +29,11 @@ const sampleInventory = {
   description: faker.company.catchPhrase()
 }
 
-const inventories: ResponseInventoryDto[] = []
-
-vi.mock('passport', () => {
-  return {
-    default: passportMock
-  }
-})
-
 let app: ReturnType<typeof express>
-describe('Inventory tests', () => {
+describe('Invitations tests', async () => {
   let agent: ReturnType<typeof request.agent>
+  let guest: User
+  const inventories: ResponseInventoryDto[] = []
 
   beforeAll(async () => {
     await AppDataSource.initialize()
@@ -41,19 +41,17 @@ describe('Inventory tests', () => {
     await authSeed()
     await seedAdmin()
 
+    const userRepository = AppDataSource.getRepository(User)
+
     const module = await import('@root/main')
     app = module.app
     agent = request.agent(app)
 
-    await agent.post('/api/v1/auth/signup').send(sampleUser)
+    await agent.post(ROUTES.AUTH.concat('/signup')).send(sampleAdmin)
+    guest = await userRepository.save(sampleGuest)
   })
 
-  afterAll(async () => {
-    // await AppDataSource.dropDatabase() // 👈 borra todo
-    await AppDataSource.destroy()
-  })
-
-  it('should create a new inventory', async () => {
+  it('should create an inventory', async () => {
     const response = await agent.post(ROUTES.INVENTORY).send(sampleInventory)
 
     const cookie = response.headers['set-cookie']
@@ -75,27 +73,14 @@ describe('Inventory tests', () => {
     inventories.push(...response.body)
   })
 
-  it('should return inventory data and access tokens', async () => {
-    const response = await agent.get(
-      ROUTES.INVENTORY.concat('/', inventories[0].id)
-    )
-
-    const cookie = response.headers['set-cookie']
-
-    expect(() => ResponseInventorySchema.parse(response.body)).not.toThrow()
-    expect(cookie).toBeDefined()
-    expect(cookie[0]).toMatch(/access_inventory/)
-    expect(cookie[1]).toMatch(/refresh_inventory/)
-  })
-
-  it('should update basic data about an inventory', async () => {
+  it('should create an invitation', async () => {
+    const [inventory] = inventories
     const response = await agent
-      .put(ROUTES.INVENTORY.concat('/', inventories[0].id))
+      .post(ROUTES.INVENTORY.concat('/', inventory.id, '/invitation'))
       .send({
-        name: faker.company.name(),
-        description: faker.company.catchPhrase()
+        userId: guest.id
       })
 
-    expect(response.status).toBe(200)
+    expect(response.status).toBe(201)
   })
 })

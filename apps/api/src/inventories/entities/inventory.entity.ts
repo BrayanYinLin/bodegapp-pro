@@ -1,3 +1,4 @@
+import { Invitation } from '@invitations/entities/invitation.entity'
 import { Member } from '@members/entities/member.entity'
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
 
@@ -16,6 +17,9 @@ class Inventory {
     nullable: true
   })
   members?: Member[]
+
+  @OneToMany(() => Invitation, (invitation) => invitation.inventory)
+  invitations?: Invitation[]
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt?: Date

@@ -18,6 +18,12 @@ const checkSignUpUserDto = (userDto: CreateUserDto) => {
   return CreateUserSchema.safeParse(userDto)
 }
 
+const InviteUserSchema = z.object({
+  userId: z.uuid()
+})
+
+type InviteUserDto = z.infer<typeof InviteUserSchema>
+
 /**
  * 🏗 **DTO para logear usuario**
  */
@@ -51,10 +57,12 @@ export {
   CreateUserSchema,
   LoginUserSchema,
   GoogleUserSchema,
+  InviteUserSchema,
   checkSignUpUserDto,
   checkSigninUserDto,
   checkGoogleUserDto,
   GoogleUserDto,
+  InviteUserDto,
   CreateUserDto,
   LoginUserDto
 }

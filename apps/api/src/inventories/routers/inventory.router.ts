@@ -1,11 +1,15 @@
 import { InventoryCtrl } from '@inventories/controllers/inventory.controller'
 import { CreateInventorySchema } from '@inventories/entities/dtos/inventory.dto'
 import { InventoryController } from '@inventories/inventory'
+import { invitationRouter } from '@invitations/routers/invitation.router'
+import { ROUTES } from '@shared/config/constants'
 import { validateMiddleware } from '@shared/middleware/validation-middleware'
 import { Router } from 'express'
 
 const createInventoryRouter = (controller: InventoryController) => {
-  const router = Router()
+  const router = Router({ mergeParams: true })
+
+  router.use(ROUTES.INVITATION, invitationRouter)
 
   router.post(
     '/',

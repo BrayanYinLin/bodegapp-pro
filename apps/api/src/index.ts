@@ -3,11 +3,16 @@ import { app } from './main'
 import { env_port_app } from '@shared/config/environment'
 import { authSeed } from '@shared/database/provider.seed'
 import { seedAdmin } from '@shared/database/role.seed'
+import { logger } from '@shared/utils/logger'
 
-app.listen(env_port_app, async () => {
-  AppDataSource.initialize()
-
+const init = async () => {
+  await AppDataSource.initialize()
   await authSeed()
   await seedAdmin()
-  console.log(`Server is running on port ${env_port_app}`)
-})
+
+  app.listen(env_port_app)
+
+  logger.info(`Server is running on port ${env_port_app}`)
+}
+
+init()

@@ -4,6 +4,9 @@ import z from 'zod'
 
 const MemberPayloadSchema = z.object({
   sub: z.uuid(),
+  member: z.object({
+    id: z.uuid()
+  }),
   inventory: ResponseInventorySchema,
   role: RoleTokenSchema
 })

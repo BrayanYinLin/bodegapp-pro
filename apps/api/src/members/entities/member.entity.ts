@@ -1,7 +1,14 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm'
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn
+} from 'typeorm'
 import { User } from '@auth/entities/user.entity'
 import { Inventory } from '@root/inventories/entities/inventory.entity'
 import { Role } from '@auth/entities/role.entity'
+import { Invitation } from '@invitations/entities/invitation.entity'
 
 @Entity()
 export class Member {
@@ -16,6 +23,9 @@ export class Member {
 
   @ManyToOne(() => Role, (role) => role.members)
   role!: Role
+
+  @OneToMany(() => Invitation, (invitation) => invitation.invitedBy)
+  invitations!: Invitation[]
 
   @Column({ type: 'boolean', default: false })
   state: boolean = false
