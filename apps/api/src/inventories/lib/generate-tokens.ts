@@ -1,8 +1,15 @@
 import { sign } from 'jsonwebtoken'
-import { ERROR_NAMES, TOKEN_PARAMS } from '@shared/config/constants'
+import {
+  ERROR_HTTP_CODES,
+  ERROR_NAMES,
+  TOKEN_PARAMS
+} from '@shared/config/constants'
 import { env_jwt_secret } from '@shared/config/environment'
 import { AppError } from '@shared/utils/error-factory'
-import { MemberPayloadDto } from '@members/entities/dto/member.dto'
+import {
+  MemberPayloadDto,
+  MemberPayloadSchema
+} from '@members/entities/dto/member.dto'
 import { randomUUID } from 'node:crypto'
 
 const generateInventoryAccessToken = (payload: MemberPayloadDto) => {
@@ -15,7 +22,18 @@ const generateInventoryAccessToken = (payload: MemberPayloadDto) => {
     })
   }
 
-  const token = sign(payload, env_jwt_secret, {
+  const { success, data, error } = MemberPayloadSchema.safeParse(payload)
+
+  if (!success || error) {
+    throw new AppError({
+      code: ERROR_NAMES.VALIDATION,
+      httpCode: ERROR_HTTP_CODES.VALIDATION,
+      isOperational: true,
+      message: 'Member payload token validation failed.'
+    })
+  }
+
+  const token = sign(data, env_jwt_secret, {
     algorithm: 'HS256',
     expiresIn: TOKEN_PARAMS.AT_DURATION
   })
