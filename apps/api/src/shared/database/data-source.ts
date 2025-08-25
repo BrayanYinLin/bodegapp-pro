@@ -27,7 +27,7 @@ export const AppDataSource = new DataSource({
   password: env_password_db,
   database: env_db,
   synchronize: env_node_env === 'development',
-  logging: env_node_env !== 'development',
+  logging: ['error', 'warn'],
   dropSchema: env_node_env === 'development',
   entities: [
     User,

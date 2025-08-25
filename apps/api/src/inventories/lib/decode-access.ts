@@ -1,9 +1,10 @@
 import { env_jwt_secret } from '@shared/config/environment'
 import { JwtPayload, verify } from 'jsonwebtoken'
-import { AppError } from './error-factory'
+import { AppError } from '@shared/utils/error-factory'
 import { ERROR_HTTP_CODES, ERROR_NAMES } from '@shared/config/constants'
+import { MemberPayloadDto } from '@members/entities/dto/member.dto'
 
-export const decodeUser = (token: string) => {
+export const decodeAccess = (token: string) => {
   if (!env_jwt_secret) {
     throw new AppError({
       code: ERROR_NAMES.INTERNAL,
@@ -13,7 +14,19 @@ export const decodeUser = (token: string) => {
     })
   }
 
-  const { sub } = verify(token, env_jwt_secret) as JwtPayload
+  if (!token) {
+    throw new AppError({
+      code: ERROR_NAMES.AUTHENTICATION,
+      httpCode: ERROR_HTTP_CODES.AUTHENTICATION,
+      isOperational: true,
+      message: 'Access inventory token not provided.'
+    })
+  }
+
+  const { inventory, role, sub } = verify(
+    token,
+    env_jwt_secret
+  ) as JwtPayload as MemberPayloadDto
 
   if (!sub) {
     throw new AppError({
@@ -24,5 +37,5 @@ export const decodeUser = (token: string) => {
     })
   }
 
-  return sub
+  return { inventory, role, sub }
 }

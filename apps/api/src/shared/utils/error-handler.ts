@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import { AppError } from './error-factory'
+import { ERROR_NAMES } from '@shared/config/constants'
 
 export const handleError = async (
   err: Error,
@@ -15,17 +16,9 @@ export const handleError = async (
     })
   }
 
-  // if (err instanceof errors.JWTInvalid) {
-  //   res.status(401).json({ status: 401, message: err.message, path: req.path })
-  //   return
-  // } else if (err instanceof errors.JWTExpired) {
-  //   res.status(401).json({ status: 401, message: err.message, path: req.path })
-  //   return
-  // }
-
   return res.status(500).json({
-    status: 'error',
-    message: 'Internal Server Error',
+    status: ERROR_NAMES.INTERNAL,
+    message: err.name ?? 'Internal Server Error',
     path: req.path,
     details: err.message ?? err.name
   })

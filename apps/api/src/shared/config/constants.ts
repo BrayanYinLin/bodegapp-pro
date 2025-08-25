@@ -36,8 +36,7 @@ const TOKEN_PARAMS = {
 
 const COOKIE_PARAMS: CookieOptions = {
   httpOnly: true,
-  sameSite: 'strict',
-  domain: 'localhost',
+  sameSite: 'lax',
   secure: env_node_env === 'PRODUCTION'
 } as const
 

@@ -10,7 +10,7 @@ const generateInventoryAccessToken = (payload: MemberPayloadDto) => {
     throw new AppError({
       code: ERROR_NAMES.INTERNAL,
       httpCode: 500,
-      isOperational: false,
+      isOperational: true,
       message: 'JWT Secret not provided'
     })
   }
@@ -28,7 +28,7 @@ const generateInventoryRefreshToken = (member: MemberPayloadDto) => {
     throw new AppError({
       code: ERROR_NAMES.INTERNAL,
       httpCode: 500,
-      isOperational: false,
+      isOperational: true,
       message: 'JWT Secret not provided'
     })
   }

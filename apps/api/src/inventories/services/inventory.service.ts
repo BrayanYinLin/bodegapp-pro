@@ -7,6 +7,7 @@ import {
 import { Inventory } from '@inventories/entities/inventory.entity'
 import {
   CreateInventoryParam,
+  EditInventoryParam,
   InventoryAndUserParam,
   InventoryParam,
   InventoryService,
@@ -19,7 +20,7 @@ import {
 import { Member } from '@members/entities/member.entity'
 import { ERROR_HTTP_CODES, ERROR_NAMES } from '@shared/config/constants'
 import { AppDataSource } from '@shared/database/data-source'
-import { ROLES } from '@shared/database/role.seed'
+import { PERMISSIONS, ROLES } from '@shared/database/role.seed'
 import { AppError } from '@shared/utils/error-factory'
 import { formatErrorMessages } from '@shared/utils/format-error-messages'
 
@@ -102,7 +103,8 @@ export class InventoryServiceImpl implements InventoryService {
     const adminRole = await this.roleRepository.findOne({
       where: {
         name: ROLES.ADMIN
-      }
+      },
+      relations: ['permissions']
     })
 
     if (!adminRole) {
@@ -162,12 +164,38 @@ export class InventoryServiceImpl implements InventoryService {
     }
   }
 
+  async edit({ dto, inventoryId, role }: EditInventoryParam): Promise<void> {
+    const { permissions } = role
+
+    const hasPermission = permissions.findIndex(
+      ({ description }) => PERMISSIONS.EDIT_INVENTORY === description
+    )
+
+    if (hasPermission === -1) {
+      throw new AppError({
+        code: ERROR_NAMES.FORBIDDEN,
+        httpCode: ERROR_HTTP_CODES.FORBIDDEN,
+        message: 'Permission not granted.',
+        isOperational: true
+      })
+    }
+
+    await AppDataSource.createQueryBuilder()
+      .update(Inventory)
+      .set({
+        name: dto.name,
+        description: dto.description
+      })
+      .where('id = :id', { id: inventoryId })
+      .execute()
+  }
+
   async findById({
     sub,
     id
   }: InventoryAndUserParam): Promise<InventoryWithTokens> {
     const member = await this.memberRepository.findOne({
-      relations: ['inventory', 'role', 'user'],
+      relations: ['inventory', 'role', 'user', 'role.permissions'],
       where: {
         user: {
           id: sub
@@ -190,7 +218,10 @@ export class InventoryServiceImpl implements InventoryService {
     const access = generateInventoryAccessToken({
       sub: member.id,
       inventory: member.inventory,
-      role: member.role
+      role: {
+        name: member.role.name,
+        permissions: member.role.permissions
+      }
     })
 
     const refresh = generateInventoryRefreshToken({

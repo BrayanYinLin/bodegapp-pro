@@ -14,6 +14,11 @@ const createInventoryRouter = (controller: InventoryController) => {
   )
   router.get('/', controller.findAllByUser.bind(controller))
   router.get('/:inventoryId', controller.findById.bind(controller))
+  router.put(
+    '/:inventoryId',
+    validateMiddleware(CreateInventorySchema),
+    controller.edit.bind(controller)
+  )
 
   return router
 }

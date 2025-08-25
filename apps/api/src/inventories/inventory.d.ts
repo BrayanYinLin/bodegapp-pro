@@ -1,3 +1,4 @@
+import { RolePayload } from '@auth/entities/dtos/role.dto'
 import {
   CreateInventoryDto,
   ResponseInventoryDto
@@ -12,6 +13,12 @@ export interface InventoryTokens {
 export type CreateInventoryParam = {
   dto: CreateInventoryDto
   sub: string
+}
+
+export type EditInventoryParam = {
+  dto: CreateInventoryDto
+  inventoryId: string
+  role: RolePayload
 }
 
 export type InventoryParam = {
@@ -32,6 +39,7 @@ export interface InventoryService {
   findAllByUser({ sub }: InventoryParam): Promise<ResponseInventoryDto[]>
   findById({ sub, id }: InventoryAndUserParam): Promise<InventoryWithTokens>
   create({ dto, sub }: CreateInventoryParam): Promise<InventoryWithTokens>
+  edit({ dto, inventoryId, role }: EditInventoryParam): Promise<void>
 }
 
 export interface InventoryController {
@@ -46,6 +54,11 @@ export interface InventoryController {
     next: NextFunction
   ): Promise<Response | void>
   create(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void>
+  edit(
     req: Request,
     res: Response,
     next: NextFunction

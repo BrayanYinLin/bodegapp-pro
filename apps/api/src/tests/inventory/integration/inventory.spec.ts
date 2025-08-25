@@ -49,8 +49,8 @@ describe('Inventory tests', () => {
   })
 
   afterAll(async () => {
-    await AppDataSource.dropDatabase() // 👈 borra todo
-    await AppDataSource.synchronize() // 👈 vuelve a crear tablas
+    // await AppDataSource.dropDatabase() // 👈 borra todo
+    // await AppDataSource.synchronize() // 👈 vuelve a crear tablas
     await AppDataSource.destroy()
   })
 
@@ -76,8 +76,6 @@ describe('Inventory tests', () => {
   })
 
   it('should return inventory data and access tokens', async () => {
-    console.info(inventories[0].id)
-
     const response = await agent.get(
       ROUTES.INVENTORY.concat('/', inventories[0].id)
     )
@@ -90,12 +88,14 @@ describe('Inventory tests', () => {
     expect(cookie[1]).toMatch(/refresh_inventory/)
   })
 
-  // it('should update basic data about an inventory', async () => {
-  //   const { status } = await agent.put('/api/v1/inventory').send({
-  //     name: faker.company.name(),
-  //     description: faker.company.catchPhrase()
-  //   })
+  it('should update basic data about an inventory', async () => {
+    const response = await agent
+      .put(ROUTES.INVENTORY.concat('/', inventories[0].id))
+      .send({
+        name: faker.company.name(),
+        description: faker.company.catchPhrase()
+      })
 
-  //   expect(status).toBe(200)
-  // })
+    expect(response.status).toBe(200)
+  })
 })

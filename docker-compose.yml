@@ -28,15 +28,14 @@ services:
     restart: unless-stopped
 
    # Contenedor para cachear las respuestas
-  #  cache_inventory_bodegapp:
-  #   redis:
-  #   image: redis:7-alpine
-  #   container_name: redis
-  #   ports:
-  #     - "6379:6379"
-  #   volumes:
-  #     - redis_data:/data
-  #   restart: unless-stopped
+   cache_inventory_bodegapp:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
 
 volumes:
   postgres_data:

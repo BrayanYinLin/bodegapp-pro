@@ -11,9 +11,9 @@ const createOauthMiddleware = () => {
   if (!env_google_client || !env_google_secret) {
     throw new AppError({
       code: ERROR_NAMES.INTERNAL,
-      httpCode: ERROR_HTTP_CODES.INTERNAL_ERROR,
+      httpCode: ERROR_HTTP_CODES.INTERNAL,
       message: 'Google credentials are not provided',
-      isOperational: false
+      isOperational: true
     })
   }
 

@@ -139,7 +139,7 @@ class AuthServiceImpl implements AuthService {
         code: ERROR_NAMES.NOT_FOUND,
         httpCode: ERROR_HTTP_CODES.NOT_FOUND,
         message: 'Email was not found',
-        isOperational: false
+        isOperational: true
       })
     }
 
@@ -162,7 +162,7 @@ class AuthServiceImpl implements AuthService {
         code: ERROR_NAMES.NOT_FOUND,
         httpCode: ERROR_HTTP_CODES.NOT_FOUND,
         message: 'Google provider not found',
-        isOperational: false
+        isOperational: true
       })
     }
 
@@ -180,7 +180,7 @@ class AuthServiceImpl implements AuthService {
         code: ERROR_NAMES.NOT_FOUND,
         httpCode: ERROR_HTTP_CODES.NOT_FOUND,
         message: 'User not found',
-        isOperational: false
+        isOperational: true
       })
     }
 

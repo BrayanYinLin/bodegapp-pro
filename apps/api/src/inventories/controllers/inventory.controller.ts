@@ -1,5 +1,6 @@
 import { CreateInventoryDto } from '@inventories/entities/dtos/inventory.dto'
 import { InventoryController } from '@inventories/inventory'
+import { decodeAccess } from '@inventories/lib/decode-access'
 import { InventoryServiceImpl } from '@inventories/services/inventory.service'
 import { COOKIE_PARAMS, ROUTES, TOKEN_PARAMS } from '@shared/config/constants'
 import { decodeUser } from '@shared/utils/decode-user'
@@ -48,6 +49,26 @@ export class InventoryCtrl implements InventoryController {
         })
         .status(201)
         .json({ message: 'Inventory created successfully.' })
+    } catch (e) {
+      next(e)
+    }
+  }
+
+  async edit(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> {
+    try {
+      const { inventoryId } = req.params
+      const { role } = decodeAccess(req.cookies.access_inventory)
+      await this.service.edit({
+        dto: req.body as CreateInventoryDto,
+        inventoryId: String(inventoryId),
+        role
+      })
+
+      return res.status(200).end()
     } catch (e) {
       next(e)
     }
