@@ -1,4 +1,8 @@
-import { CreateUserDto, LoginUserDto } from '@auth/entities/dtos/user.dto'
+import {
+  CreateUserDto,
+  FindUserEmailDto,
+  LoginUserDto
+} from '@auth/entities/dtos/user.dto'
 import { setAuthCookies } from '@auth/lib/set-auth-cookie'
 import { AuthServiceImpl } from '@auth/services/auth.service'
 import { AuthController } from '@root/types'
@@ -76,6 +80,22 @@ class AuthCtrl implements AuthController {
       )
     } catch (e) {
       console.error(e)
+      next(e)
+    }
+  }
+
+  async findByEmail(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> {
+    try {
+      const found = await this.authService.findByEmail(
+        req.body as FindUserEmailDto
+      )
+
+      return res.json(found)
+    } catch (e) {
       next(e)
     }
   }

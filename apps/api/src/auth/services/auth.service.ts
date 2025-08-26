@@ -3,7 +3,9 @@ import {
   checkSigninUserDto,
   checkSignUpUserDto,
   CreateUserDto,
-  LoginUserDto
+  FindUserEmailDto,
+  LoginUserDto,
+  ResponseUserIdDto
 } from '@auth/entities/dtos/user.dto'
 import { User } from '@auth/entities/user.entity'
 import {
@@ -19,8 +21,9 @@ import { hash, compare } from 'bcrypt'
 import { Profile } from 'passport'
 
 class AuthServiceImpl implements AuthService {
+  constructor(private readonly repo = AppDataSource.getRepository(User)) {}
+
   async signin(user: LoginUserDto): Promise<AuthTokens> {
-    const repository = AppDataSource.getRepository(User)
     const { success, data, error } = checkSigninUserDto(user)
 
     if (!success || !data) {
@@ -33,7 +36,7 @@ class AuthServiceImpl implements AuthService {
       })
     }
 
-    const foundUser = await repository.findOne({
+    const foundUser = await this.repo.findOne({
       where: { email: data.email },
       relations: {
         provider: true
@@ -75,7 +78,6 @@ class AuthServiceImpl implements AuthService {
   }
 
   async signup(user: CreateUserDto): Promise<AuthTokens> {
-    const repository = AppDataSource.getRepository(User)
     const AuthProviderRepository = AppDataSource.getRepository(AuthProvider)
     const { success, data, error } = checkSignUpUserDto(user)
 
@@ -107,7 +109,7 @@ class AuthServiceImpl implements AuthService {
       Number(env_bcrypt_salt_rounds)
     )
 
-    const newUser = await repository.save(
+    const newUser = await this.repo.save(
       new User({
         name: data.name,
         email: data.email,
@@ -131,7 +133,6 @@ class AuthServiceImpl implements AuthService {
   }
 
   async callbackGoogle(profile: Profile): Promise<AuthTokens> {
-    const userRepository = AppDataSource.getRepository(User)
     const providerRepository = AppDataSource.getRepository(AuthProvider)
 
     if (!profile.emails) {
@@ -145,7 +146,7 @@ class AuthServiceImpl implements AuthService {
 
     const email = profile?.emails[0].value
 
-    const existingUser = await userRepository.findOne({
+    const existingUser = await this.repo.findOne({
       where: {
         email
       }
@@ -168,7 +169,7 @@ class AuthServiceImpl implements AuthService {
 
     let userRecord = existingUser
     if (!existingUser) {
-      userRecord = await userRepository.save({
+      userRecord = await this.repo.save({
         name: profile.displayName,
         email: profile.emails[0].value,
         provider: googleProvider
@@ -195,6 +196,27 @@ class AuthServiceImpl implements AuthService {
     return {
       access_token,
       refresh_token
+    }
+  }
+
+  async findByEmail({ email }: FindUserEmailDto): Promise<ResponseUserIdDto> {
+    const user = await this.repo.findOne({
+      where: {
+        email
+      }
+    })
+
+    if (!user) {
+      throw new AppError({
+        code: ERROR_NAMES.NOT_FOUND,
+        httpCode: ERROR_HTTP_CODES.NOT_FOUND,
+        message: 'User not found by email.',
+        isOperational: true
+      })
+    }
+
+    return {
+      userId: user.id
     }
   }
 }

@@ -18,12 +18,17 @@ const checkSignUpUserDto = (userDto: CreateUserDto) => {
   return CreateUserSchema.safeParse(userDto)
 }
 
-const InviteUserSchema = z.object({
+const FindUserEmailSchema = z.object({
+  email: z.email()
+})
+
+type FindUserEmailDto = z.infer<typeof FindUserEmailSchema>
+
+const ResponseUserIdSchema = z.object({
   userId: z.uuid()
 })
 
-type InviteUserDto = z.infer<typeof InviteUserSchema>
-
+type ResponseUserIdDto = z.infer<typeof ResponseUserIdSchema>
 /**
  * 🏗 **DTO para logear usuario**
  */
@@ -57,12 +62,14 @@ export {
   CreateUserSchema,
   LoginUserSchema,
   GoogleUserSchema,
-  InviteUserSchema,
+  FindUserEmailSchema,
+  ResponseUserIdSchema,
   checkSignUpUserDto,
   checkSigninUserDto,
   checkGoogleUserDto,
   GoogleUserDto,
-  InviteUserDto,
+  FindUserEmailDto,
   CreateUserDto,
-  LoginUserDto
+  LoginUserDto,
+  ResponseUserIdDto
 }

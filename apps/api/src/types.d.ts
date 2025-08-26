@@ -1,4 +1,9 @@
-import { CreateUserDto, LoginUserDto } from './auth/entities/dtos/user.dto'
+import {
+  CreateUserDto,
+  FindUserEmailDto,
+  LoginUserDto,
+  ResponseUserIdDto
+} from './auth/entities/dtos/user.dto'
 import { Request, Response } from 'express'
 import { Profile } from 'passport-google-oauth20'
 
@@ -18,6 +23,7 @@ interface AuthService {
   signup(user: CreateUserDto): Promise<AuthTokens>
   signin(user: LoginUserDto): Promise<AuthTokens>
   callbackGoogle(profile: Profile): Promise<AuthTokens>
+  findByEmail(user: FindUserEmailDto): Promise<ResponseUserIdDto>
 }
 
 interface AuthController {
@@ -33,6 +39,11 @@ interface AuthController {
   ): Promise<Response | void>
   logout(req: Request, res: Response): Promise<Response>
   callback(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void>
+  findByEmail(
     req: Request,
     res: Response,
     next: NextFunction
