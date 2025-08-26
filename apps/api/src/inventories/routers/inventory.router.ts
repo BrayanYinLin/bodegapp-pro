@@ -1,3 +1,4 @@
+import { roleRouter } from '@auth/routers/role.router'
 import { InventoryCtrl } from '@inventories/controllers/inventory.controller'
 import { CreateInventorySchema } from '@inventories/entities/dtos/inventory.dto'
 import { InventoryController } from '@inventories/inventory'
@@ -10,6 +11,7 @@ const createInventoryRouter = (controller: InventoryController) => {
   const router = Router({ mergeParams: true })
 
   router.use(ROUTES.INVITATION, invitationRouter)
+  router.use(ROUTES.ROLE, roleRouter)
 
   router.post(
     '/',

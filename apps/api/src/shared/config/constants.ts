@@ -43,7 +43,8 @@ const COOKIE_PARAMS: CookieOptions = {
 const ROUTES = {
   AUTH: '/api/v1/auth',
   INVENTORY: '/api/v1/inventory',
-  INVITATION: '/:inventoryId/invitation'
+  INVITATION: '/:inventoryId/invitation',
+  ROLE: '/:inventoryId/role'
 } as const
 
 type Code = (typeof ERROR_NAMES)[keyof typeof ERROR_NAMES]

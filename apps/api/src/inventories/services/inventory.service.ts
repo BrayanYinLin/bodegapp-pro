@@ -20,7 +20,7 @@ import {
 import { Member } from '@members/entities/member.entity'
 import { ERROR_HTTP_CODES, ERROR_NAMES } from '@shared/config/constants'
 import { AppDataSource } from '@shared/database/data-source'
-import { PERMISSIONS, ROLES } from '@shared/database/role.seed'
+import { PERMISSIONS, ROLES, seedAdmin } from '@shared/database/role.seed'
 import { AppError } from '@shared/utils/error-factory'
 import { formatErrorMessages } from '@shared/utils/format-error-messages'
 
@@ -99,6 +99,14 @@ export class InventoryServiceImpl implements InventoryService {
       })
     }
 
+    //  Crea el inventario
+    const inventory = await this.repository.save({
+      name: dto.name,
+      description: dto.description
+    })
+
+    await seedAdmin(inventory)
+
     //  Busca el rol de administrador -> Rol por defecto
     const adminRole = await this.roleRepository.findOne({
       where: {
@@ -115,12 +123,6 @@ export class InventoryServiceImpl implements InventoryService {
         isOperational: true
       })
     }
-
-    //  Crea el inventario
-    const inventory = await this.repository.save({
-      name: dto.name,
-      description: dto.description
-    })
 
     //  Lo vincula con el usuario
     const member = await this.memberRepository.save({
