@@ -2,10 +2,18 @@ import { ResponseInventorySchema } from '@inventories/entities/dtos/inventory.dt
 import z from 'zod'
 import { InvitationStatus } from '../invitation.entity'
 
+const InviteUserSchema = z.object({
+  userId: z.uuid(),
+  roleId: z.uuid()
+})
+
+type InviteUserDto = z.infer<typeof InviteUserSchema>
+
 const CreateInvitationSchema = z.object({
   userId: z.uuid(),
   inventoryId: z.uuid(),
-  memberId: z.uuid()
+  memberId: z.uuid(),
+  roleId: z.uuid()
 })
 
 type CreateInvitationDto = z.infer<typeof CreateInvitationSchema>
@@ -27,6 +35,8 @@ type ResponseInvitationDto = z.infer<typeof ResponseInvitationSchema>
 export {
   CreateInvitationSchema,
   ResponseInvitationSchema,
+  InviteUserSchema,
+  InviteUserDto,
   ResponseInvitationDto,
   CreateInvitationDto
 }

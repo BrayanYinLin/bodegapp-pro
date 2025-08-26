@@ -28,12 +28,13 @@ class InvitationCtrl implements InvitationController {
   ): Promise<Response | void> {
     try {
       const { inventoryId } = req.params
-      const { userId } = req.body
+      const { userId, roleId } = req.body
       const { member } = decodeAccess(req.cookies.access_inventory)
       await this.service.create({
         userId: userId,
         memberId: member.id,
-        inventoryId: inventoryId
+        inventoryId: inventoryId,
+        roleId: roleId
       })
 
       return res.status(201).json({ message: 'Invitation created' })

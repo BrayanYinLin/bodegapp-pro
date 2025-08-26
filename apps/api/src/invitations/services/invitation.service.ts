@@ -3,7 +3,10 @@ import {
   ResponseInvitationDto,
   ResponseInvitationSchema
 } from '@invitations/entities/dtos/invitation.dto'
-import { Invitation } from '@invitations/entities/invitation.entity'
+import {
+  Invitation,
+  InvitationStatus
+} from '@invitations/entities/invitation.entity'
 import { FindByUserDto, InvitationService } from '@invitations/invitation'
 import { Member } from '@members/entities/member.entity'
 import { ERROR_HTTP_CODES, ERROR_NAMES } from '@shared/config/constants'
@@ -51,7 +54,8 @@ class InvitationServiceImpl implements InvitationService {
   async create({
     userId,
     inventoryId,
-    memberId
+    memberId,
+    roleId
   }: CreateInvitationDto): Promise<void> {
     const member = await this.memberRepository.findOne({
       where: {
@@ -93,7 +97,11 @@ class InvitationServiceImpl implements InvitationService {
       },
       inventory: {
         id: inventoryId
-      }
+      },
+      role: {
+        id: roleId
+      },
+      status: InvitationStatus.PENDING
     })
   }
 }

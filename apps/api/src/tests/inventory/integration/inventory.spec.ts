@@ -1,6 +1,5 @@
 import { AppDataSource } from '@shared/database/data-source'
 import { authSeed } from '@shared/database/provider.seed'
-import { seedAdmin } from '@shared/database/role.seed'
 import { describe, beforeAll, it, expect, vi, afterAll } from 'vitest'
 import express from 'express'
 import request from 'supertest'
@@ -39,7 +38,6 @@ describe('Inventory tests', () => {
     await AppDataSource.initialize()
     await AppDataSource.synchronize()
     await authSeed()
-    await seedAdmin()
 
     const module = await import('@root/main')
     app = module.app

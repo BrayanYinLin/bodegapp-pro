@@ -1,7 +1,6 @@
 import { faker } from '@faker-js/faker'
 import { AppDataSource } from '@shared/database/data-source'
 import { authSeed } from '@shared/database/provider.seed'
-import { seedAdmin } from '@shared/database/role.seed'
 import { beforeAll, describe, it, expect } from 'vitest'
 import express from 'express'
 import request from 'supertest'
@@ -11,6 +10,8 @@ import {
   ResponseInventoryDto,
   ResponseInventorySchema
 } from '@inventories/entities/dtos/inventory.dto'
+import { ResponseRoleDto } from '@auth/entities/dtos/role.dto'
+import { logger } from '@shared/utils/logger'
 
 const sampleAdmin = {
   name: faker.person.firstName(),
@@ -34,12 +35,12 @@ describe('Invitations tests', async () => {
   let agent: ReturnType<typeof request.agent>
   let guest: User
   const inventories: ResponseInventoryDto[] = []
+  const roles: ResponseRoleDto[] = []
 
   beforeAll(async () => {
     await AppDataSource.initialize()
     await AppDataSource.synchronize()
     await authSeed()
-    await seedAdmin()
 
     const userRepository = AppDataSource.getRepository(User)
 
@@ -73,12 +74,27 @@ describe('Invitations tests', async () => {
     inventories.push(...response.body)
   })
 
+  it('should return all roles by inventory', async () => {
+    const [inventory] = inventories
+    const response = await agent.get(
+      ROUTES.INVENTORY.concat('/', inventory.id, '/role')
+    )
+
+    logger.info(response.body)
+    expect(response.status).toBe(200)
+    roles.push(...response.body)
+  })
+
   it('should create an invitation', async () => {
     const [inventory] = inventories
+    const [role] = roles
+    logger.info(ROUTES.INVENTORY.concat('/', inventory.id, '/invitation'))
+    logger.info(roles)
     const response = await agent
       .post(ROUTES.INVENTORY.concat('/', inventory.id, '/invitation'))
       .send({
-        userId: guest.id
+        userId: guest.id,
+        roleId: role.id
       })
 
     expect(response.status).toBe(201)

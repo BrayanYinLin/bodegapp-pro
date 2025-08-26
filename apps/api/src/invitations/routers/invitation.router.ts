@@ -1,11 +1,11 @@
-import { InviteUserSchema } from '@auth/entities/dtos/user.dto'
 import { InvitationCtrl } from '@invitations/controllers/invitation.controller'
+import { InviteUserSchema } from '@invitations/entities/dtos/invitation.dto'
 import { InvitationController } from '@invitations/invitation'
 import { validateMiddleware } from '@shared/middleware/validation-middleware'
 import { Router } from 'express'
 
 const createInvitationRouter = (controller: InvitationController) => {
-  const router = Router()
+  const router = Router({ mergeParams: true })
 
   router.post(
     '/',

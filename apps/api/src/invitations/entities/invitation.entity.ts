@@ -1,3 +1,4 @@
+import { Role } from '@auth/entities/role.entity'
 import { User } from '@auth/entities/user.entity'
 import { Inventory } from '@inventories/entities/inventory.entity'
 import { Member } from '@members/entities/member.entity'
@@ -31,6 +32,9 @@ export class Invitation {
   @ManyToOne(() => Inventory, (inventory) => inventory.invitations)
   @JoinColumn({ name: 'inventory_id' })
   inventory!: Inventory
+
+  @ManyToOne(() => Role, (role) => role.invitations)
+  role!: Role
 
   @Column({
     type: 'enum',
