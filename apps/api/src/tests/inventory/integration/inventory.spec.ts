@@ -47,7 +47,7 @@ describe('Inventory tests', () => {
   })
 
   afterAll(async () => {
-    // await AppDataSource.dropDatabase() // 👈 borra todo
+    await AppDataSource.dropDatabase()
     await AppDataSource.destroy()
   })
 
