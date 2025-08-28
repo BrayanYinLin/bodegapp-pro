@@ -24,6 +24,7 @@ interface AuthService {
   signin(user: LoginUserDto): Promise<AuthTokens>
   callbackGoogle(profile: Profile): Promise<AuthTokens>
   findByEmail(user: FindUserEmailDto): Promise<ResponseUserIdDto>
+  refresh(token: string): Promise<AuthTokens>
 }
 
 interface AuthController {
@@ -44,6 +45,11 @@ interface AuthController {
     next: NextFunction
   ): Promise<Response | void>
   findByEmail(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void>
+  refresh(
     req: Request,
     res: Response,
     next: NextFunction

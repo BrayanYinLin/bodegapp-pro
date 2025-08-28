@@ -5,9 +5,22 @@ import { AppError } from '@shared/utils/error-factory'
 import { sign } from 'jsonwebtoken'
 import { randomUUID } from 'node:crypto'
 
-export type UserId = Pick<User, 'id'>
+export type UserIdDto = Pick<User, 'id'>
+export type AccessTokenDto = {
+  token: string
+  payload: {
+    sub: string
+  }
+}
+export type RefreshTokenDto = {
+  token: string
+  payload: {
+    jti: string
+    sub: string
+  }
+}
 
-const generateAccessToken = ({ id }: UserId) => {
+const accessToken = ({ id }: UserIdDto): AccessTokenDto => {
   if (!env_jwt_secret) {
     throw new AppError({
       code: ERROR_NAMES.INTERNAL,
@@ -18,8 +31,7 @@ const generateAccessToken = ({ id }: UserId) => {
   }
 
   const payload = {
-    sub: id,
-    iat: Math.floor(Date.now() / 1000)
+    sub: id
   }
 
   const token = sign(payload, env_jwt_secret, {
@@ -27,10 +39,13 @@ const generateAccessToken = ({ id }: UserId) => {
     expiresIn: TOKEN_PARAMS.AT_DURATION
   })
 
-  return token
+  return {
+    token,
+    payload
+  }
 }
 
-const generateRefreshToken = ({ id }: UserId) => {
+const refreshToken = ({ id }: UserIdDto): RefreshTokenDto => {
   if (!env_jwt_secret) {
     throw new AppError({
       code: ERROR_NAMES.INTERNAL,
@@ -50,7 +65,10 @@ const generateRefreshToken = ({ id }: UserId) => {
     expiresIn: TOKEN_PARAMS.RT_DURATION
   })
 
-  return token
+  return {
+    token,
+    payload
+  }
 }
 
-export { generateAccessToken, generateRefreshToken }
+export { accessToken, refreshToken }

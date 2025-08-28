@@ -99,6 +99,24 @@ class AuthCtrl implements AuthController {
       next(e)
     }
   }
+
+  async refresh(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> {
+    try {
+      const { access_token, refresh_token } = await this.authService.refresh(
+        req.cookies.refresh_token
+      )
+
+      return setAuthCookies(res, access_token, refresh_token).json({
+        message: 'Token refreshed'
+      })
+    } catch (e) {
+      next(e)
+    }
+  }
 }
 
 export { AuthCtrl }

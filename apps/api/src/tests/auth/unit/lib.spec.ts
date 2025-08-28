@@ -6,11 +6,9 @@
 // Pruebas Unitarias para `auth.controller.ts`: Aunque las pruebas de integración cubren el controlador, las pruebas unitarias permitirían verificar
 //       que el controlador llama a los métodos de servicio correctos y maneja adecuadamente los objetos de solicitud/respuesta (request/response) sin
 //       necesidad de un servidor completo.
-import {
-  generateAccessToken,
-  generateRefreshToken
-} from '@auth/lib/generate-tokens'
+import { accessToken, refreshToken } from '@auth/lib/generate-tokens'
 import { env_jwt_secret } from '@shared/config/environment'
+import { logger } from '@shared/utils/logger'
 import { JwtPayload, verify } from 'jsonwebtoken'
 import { randomUUID } from 'node:crypto'
 import { describe, expect, it } from 'vitest'
@@ -19,9 +17,9 @@ describe('Lib tests', () => {
   const id = randomUUID()
 
   it('should encode tokens successfully', () => {
-    expect(() => generateAccessToken({ id })).not.throw()
+    expect(() => accessToken({ id })).not.throw()
 
-    const access_token = generateAccessToken({ id })
+    const { token: access_token } = accessToken({ id })
 
     if (!env_jwt_secret) throw new Error()
 
@@ -30,9 +28,9 @@ describe('Lib tests', () => {
     expect(iat).toBeTypeOf('number')
     expect(exp).toBeTypeOf('number')
 
-    expect(() => generateAccessToken({ id })).not.throw()
+    expect(() => accessToken({ id })).not.throw()
 
-    const refresh_token = generateRefreshToken({ id })
+    const { token: refresh_token } = refreshToken({ id })
 
     const {
       sub: refreshSub,
@@ -42,5 +40,16 @@ describe('Lib tests', () => {
     expect(refreshSub).toBe(id)
     expect(refreshIat).toBeTypeOf('number')
     expect(refreshExp).toBeTypeOf('number')
+  })
+
+  it('should verify refresh_token', () => {
+    const { token } = refreshToken({ id: id })
+
+    if (!env_jwt_secret) throw new Error()
+
+    const payload = verify(token, env_jwt_secret) as JwtPayload
+    logger.info(payload)
+
+    expect(payload).toBeDefined()
   })
 })

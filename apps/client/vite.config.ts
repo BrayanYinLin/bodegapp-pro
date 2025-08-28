@@ -1,7 +1,11 @@
-import { join } from 'node:path'
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 import tailwindcss from '@tailwindcss/vite'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -9,6 +13,15 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': join(__dirname, 'src')
+    }
+  },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000/api/v1',
+        changeOrigin: true,
+        secure: false
+      }
     }
   }
 })
