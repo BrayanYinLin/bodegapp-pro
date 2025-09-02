@@ -41,9 +41,9 @@ const PERMISSIONS = {
 
 export type GrantedPermission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS]
 
-const seedAdmin = async (inventory: Inventory) => {
-  const roleRepository = AppDataSource.getRepository(Role)
+const seedPermissions = async () => {
   const permissionRepository = AppDataSource.getRepository(Permission)
+
   const permissions: Permission[] = []
 
   for (const permission of Object.values(PERMISSIONS)) {
@@ -65,6 +65,13 @@ const seedAdmin = async (inventory: Inventory) => {
     permissions.push(permissionCreated)
   }
 
+  return permissions
+}
+
+const seedAdmin = async (inventory: Inventory) => {
+  const roleRepository = AppDataSource.getRepository(Role)
+  const permissions = await seedPermissions()
+
   const existing = await roleRepository.findOne({
     where: {
       name: ROLES.ADMIN
@@ -82,4 +89,4 @@ const seedAdmin = async (inventory: Inventory) => {
   }
 }
 
-export { ROLES, PERMISSIONS, seedAdmin }
+export { ROLES, PERMISSIONS, seedAdmin, seedPermissions }
