@@ -7,7 +7,7 @@ import {
 } from 'typeorm'
 import { User } from '@auth/entities/user.entity'
 import { Inventory } from '@inventories/entities/inventory.entity'
-import { Role } from '@auth/entities/role.entity'
+import { Role } from '@authorization/entities/role.entity'
 import { Invitation } from '@invitations/entities/invitation.entity'
 
 @Entity()

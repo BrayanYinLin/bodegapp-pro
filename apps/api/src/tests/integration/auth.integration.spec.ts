@@ -4,7 +4,7 @@ import request from 'supertest'
 import { AppDataSource } from '@shared/database/data-source'
 import { authSeed, authUnseed } from '@shared/database/provider.seed'
 import { User } from '@auth/entities/user.entity'
-import { passportMock } from '@root/tests/mocks/passport'
+import { passportMock } from '@root/tests/utils/mocks/passport'
 
 const mockUser = {
   name: faker.person.firstName(),

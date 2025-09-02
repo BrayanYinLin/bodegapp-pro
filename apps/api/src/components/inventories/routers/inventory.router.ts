@@ -1,4 +1,4 @@
-import { roleRouter } from '@auth/routers/role.router'
+import { roleRouter } from '@authorization/routers/role.router'
 import { InventoryCtrl } from '@inventories/controllers/inventory.controller'
 import { CreateInventorySchema } from '@inventories/entities/dtos/inventory.dto'
 import { InventoryController } from '@inventories/inventory'

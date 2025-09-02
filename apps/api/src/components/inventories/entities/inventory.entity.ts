@@ -1,4 +1,4 @@
-import { Role } from '@auth/entities/role.entity'
+import { Role } from '@authorization/entities/role.entity'
 import { Invitation } from '@invitations/entities/invitation.entity'
 import { Member } from '@members/entities/member.entity'
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm'

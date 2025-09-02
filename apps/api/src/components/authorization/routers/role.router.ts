@@ -1,5 +1,5 @@
-import { RoleCtrl } from '@auth/controllers/role.controller'
-import { RoleController } from '@auth/role'
+import { RoleCtrl } from '../controllers/role.controller'
+import { RoleController } from '../role'
 import { PERMISSIONS } from '@shared/database/role.seed'
 import { checkPermission } from '@shared/middleware/check-permission-middleware'
 import { Router } from 'express'

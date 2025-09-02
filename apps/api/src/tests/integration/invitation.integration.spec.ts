@@ -8,13 +8,13 @@ import { ROUTES } from '@shared/config/constants'
 import { env_bcrypt_salt_rounds } from '@shared/config/environment'
 
 import { ResponseInventoryDto } from '@inventories/entities/dtos/inventory.dto'
-import { ResponseRoleDto } from '@auth/entities/dtos/role.dto'
+import { ResponseRoleDto } from '@authorization/entities/dtos/role.dto'
 import { User } from '@auth/entities/user.entity'
 import { AuthProvider } from '@auth/entities/auth-provider.entity'
 import { Invitation } from '@invitations/entities/invitation.entity'
 import { app } from '@root/main'
-import { fakeUser } from '@root/tests/helpers/fakeUser'
-import { fakeInventory } from '@root/tests/helpers/fakeInventory'
+import { fakeUser } from '@root/tests/utils/factories/fakeUser'
+import { fakeInventory } from '@root/tests/utils/factories/fakeInventory'
 
 describe('Invitations tests', async () => {
   const agentAdmin = request.agent(app)

@@ -1,4 +1,4 @@
-import { RolePayload } from '@auth/entities/dtos/role.dto'
+import { RolePayload } from '@authorization/entities/dtos/role.dto'
 import {
   CreateInventoryDto,
   ResponseInventoryDto

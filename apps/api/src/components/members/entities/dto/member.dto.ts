@@ -1,4 +1,4 @@
-import { RoleTokenSchema } from '@auth/entities/dtos/role.dto'
+import { RoleTokenSchema } from '@authorization/entities/dtos/role.dto'
 import { ResponseInventorySchema } from '@inventories/entities/dtos/inventory.dto'
 import z from 'zod'
 

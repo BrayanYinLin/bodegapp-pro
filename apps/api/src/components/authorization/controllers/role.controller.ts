@@ -1,5 +1,5 @@
-import { RoleController } from '@auth/role'
-import { RoleServiceImpl } from '@auth/services/role.service'
+import { RoleController } from '../role'
+import { RoleServiceImpl } from '../services/role.service'
 import { Request, Response, NextFunction } from 'express'
 
 class RoleCtrl implements RoleController {

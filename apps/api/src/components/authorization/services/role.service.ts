@@ -1,9 +1,6 @@
-import {
-  ResponseRoleDto,
-  ResponseRoleSchema
-} from '@auth/entities/dtos/role.dto'
-import { Role } from '@auth/entities/role.entity'
-import { RoleByInventoryParam, RoleService } from '@auth/role'
+import { ResponseRoleDto, ResponseRoleSchema } from '../entities/dtos/role.dto'
+import { Role } from '@authorization/entities/role.entity'
+import { RoleByInventoryParam, RoleService } from '@authorization/role'
 import { ERROR_HTTP_CODES, ERROR_NAMES } from '@shared/config/constants'
 import { AppDataSource } from '@shared/database/data-source'
 import { AppError } from '@shared/utils/error-factory'

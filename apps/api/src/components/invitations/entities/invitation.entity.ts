@@ -1,4 +1,4 @@
-import { Role } from '@auth/entities/role.entity'
+import { Role } from '@authorization/entities/role.entity'
 import { User } from '@auth/entities/user.entity'
 import { Inventory } from '@inventories/entities/inventory.entity'
 import { Member } from '@members/entities/member.entity'

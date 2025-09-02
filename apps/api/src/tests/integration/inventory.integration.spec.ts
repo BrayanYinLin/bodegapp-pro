@@ -3,7 +3,7 @@ import { authSeed } from '@shared/database/provider.seed'
 import { describe, beforeAll, it, expect, vi, afterAll } from 'vitest'
 import express from 'express'
 import request from 'supertest'
-import { passportMock } from '@root/tests/mocks/passport'
+import { passportMock } from '../utils/mocks/passport'
 import { faker } from '@faker-js/faker'
 import {
   ResponseInventoryDto,

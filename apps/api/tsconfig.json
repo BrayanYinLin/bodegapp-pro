@@ -37,6 +37,7 @@
       "@invitations/*": ["src/components/invitations/*"],
       "@products/*": ["./src/components/products/*"],
       "@auth/*": ["./src/components/auth/*"],
+      "@authorization/*": ["./src/components/authorization/*"],
       "@shared/*": ["./src/shared/*"],
       "@root/*": ["./src/*"]
     },                                      /* Specify a set of entries that re-map imports to additional lookup locations. */

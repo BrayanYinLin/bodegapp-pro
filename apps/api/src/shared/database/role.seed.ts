@@ -1,6 +1,6 @@
-import { Role } from '@auth/entities/role.entity'
+import { Role } from '@authorization/entities/role.entity'
 import { AppDataSource } from './data-source'
-import { Permission } from '@auth/entities/permission.entity'
+import { Permission } from '@authorization/entities/permission.entity'
 import { Inventory } from '@inventories/entities/inventory.entity'
 
 const ROLES = {

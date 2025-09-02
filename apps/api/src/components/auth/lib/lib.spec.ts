@@ -8,7 +8,6 @@
 //       necesidad de un servidor completo.
 import { accessToken, refreshToken } from '@auth/lib/generate-tokens'
 import { env_jwt_secret } from '@shared/config/environment'
-import { logger } from '@shared/utils/logger'
 import { JwtPayload, verify } from 'jsonwebtoken'
 import { randomUUID } from 'node:crypto'
 import { describe, expect, it } from 'vitest'
@@ -48,7 +47,6 @@ describe('Lib tests', () => {
     if (!env_jwt_secret) throw new Error()
 
     const payload = verify(token, env_jwt_secret) as JwtPayload
-    logger.info(payload)
 
     expect(payload).toBeDefined()
   })
