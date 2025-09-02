@@ -27,8 +27,8 @@ export class Member {
   @OneToMany(() => Invitation, (invitation) => invitation.invitedBy)
   invitations!: Invitation[]
 
-  @Column({ type: 'boolean', default: false })
-  state: boolean = false
+  @Column({ type: 'boolean', default: true })
+  state: boolean = true
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   joinedAt?: Date

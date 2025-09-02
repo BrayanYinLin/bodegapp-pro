@@ -9,6 +9,12 @@ const InviteUserSchema = z.object({
 
 type InviteUserDto = z.infer<typeof InviteUserSchema>
 
+const InvitationIdSchema = z.object({
+  invitationId: z.uuid()
+})
+
+type InvitationIdDto = z.infer<typeof InvitationIdSchema>
+
 const CreateInvitationSchema = z.object({
   userId: z.uuid(),
   inventoryId: z.uuid(),
@@ -19,12 +25,13 @@ const CreateInvitationSchema = z.object({
 type CreateInvitationDto = z.infer<typeof CreateInvitationSchema>
 
 const ResponseInvitationSchema = z.object({
+  id: z.uuid(),
   invitedBy: z.object({
     id: z.uuid(),
-    user: {
+    user: z.object({
       name: z.string(),
       email: z.email()
-    }
+    })
   }),
   inventory: ResponseInventorySchema,
   status: z.enum(InvitationStatus)
@@ -36,7 +43,9 @@ export {
   CreateInvitationSchema,
   ResponseInvitationSchema,
   InviteUserSchema,
+  InvitationIdSchema,
   InviteUserDto,
   ResponseInvitationDto,
-  CreateInvitationDto
+  CreateInvitationDto,
+  InvitationIdDto
 }

@@ -42,6 +42,36 @@ class InvitationCtrl implements InvitationController {
       next(e)
     }
   }
+
+  async accept(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> {
+    try {
+      const { invitationId } = req.body
+      await this.service.accept({ invitationId })
+
+      return res.status(204).end()
+    } catch (e) {
+      next(e)
+    }
+  }
+
+  async reject(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> {
+    try {
+      const { invitationId } = req.body
+      await this.service.reject({ invitationId })
+
+      return res.status(204).end()
+    } catch (e) {
+      next(e)
+    }
+  }
 }
 
 export { InvitationCtrl }

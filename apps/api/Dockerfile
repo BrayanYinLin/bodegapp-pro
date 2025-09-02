@@ -6,7 +6,7 @@
 FROM node:22-slim AS builder
 
 # Establecer el directorio de trabajo
-WORKDIR /usr/src/app
+WORKDIR /usr/app
 
 # Instalar pnpm
 RUN npm install -g pnpm
@@ -36,17 +36,17 @@ RUN pnpm --filter api run build
 FROM node:22-slim
 
 # Establecer el directorio de trabajo
-WORKDIR /usr/src/app
+WORKDIR /usr/app
 
 # Copiar las dependencias de producción desde la etapa 'builder'
-COPY --from=builder /usr/src/app/node_modules ./node_modules
-COPY --from=builder /usr/src/app/apps/api/node_modules ./apps/api/node_modules
+COPY --from=builder /usr/app/node_modules ./node_modules
+COPY --from=builder /usr/app/apps/api/node_modules ./apps/api/node_modules
 
 # Copiar los archivos de package.json
 COPY apps/api/package.json ./apps/api/package.json
 
 # Copiar el código JavaScript compilado desde la etapa 'builder'
-COPY --from=builder /usr/src/app/apps/api/dist ./apps/api/dist
+COPY --from=builder /usr/app/apps/api/dist ./apps/api/dist
 
 # Exponer el puerto en el que correrá la aplicación
 EXPOSE 3000

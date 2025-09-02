@@ -1,81 +1,71 @@
 import { describe, beforeAll, afterAll, it, expect } from 'vitest'
 import request from 'supertest'
-import express from 'express'
-import { faker } from '@faker-js/faker'
+import { hash } from 'bcrypt'
+
 import { AppDataSource } from '@shared/database/data-source'
 import { authSeed } from '@shared/database/provider.seed'
 import { ROUTES } from '@shared/config/constants'
+import { env_bcrypt_salt_rounds } from '@shared/config/environment'
+
 import { ResponseInventoryDto } from '@inventories/entities/dtos/inventory.dto'
 import { ResponseRoleDto } from '@auth/entities/dtos/role.dto'
 import { User } from '@auth/entities/user.entity'
 import { AuthProvider } from '@auth/entities/auth-provider.entity'
 import { Invitation } from '@invitations/entities/invitation.entity'
-
-const sampleAdmin = {
-  name: faker.person.firstName(),
-  email: faker.internet.email(),
-  password: faker.internet.password({ length: 10 })
-}
-
-const sampleGuest = {
-  name: faker.person.firstName(),
-  email: faker.internet.email(),
-  password: faker.internet.password({ length: 10 })
-}
-
-const sampleInventory = {
-  name: faker.company.name(),
-  description: faker.company.catchPhrase()
-}
+import { app } from '@root/main'
+import { fakeUser } from '@root/tests/helpers/fakeUser'
+import { fakeInventory } from '@root/tests/helpers/fakeInventory'
 
 describe('Invitations tests', async () => {
-  let agentAdmin: ReturnType<typeof request.agent>
-  let agentGuest: ReturnType<typeof request.agent>
-  let app: ReturnType<typeof express>
+  const agentAdmin = request.agent(app)
+  const agentGuest = request.agent(app)
+
   let inventory: ResponseInventoryDto
   let role: ResponseRoleDto
   let guest: User
-  let invitation: Invitation
-  const inventories: ResponseInventoryDto[] = []
-  const roles: ResponseRoleDto[] = []
+  let invitationToAccept: Invitation
+  let invitationToReject: Invitation
+
+  const sampleAdmin = fakeUser()
+  const sampleGuest = fakeUser()
+  const sampleInventory = fakeInventory()
 
   beforeAll(async () => {
     await AppDataSource.initialize()
     await AppDataSource.synchronize()
     await authSeed()
 
-    const module = await import('@root/main')
-    app = module.app
-
-    const userRepository = AppDataSource.getRepository(User)
-    const localRepository = AppDataSource.getRepository(AuthProvider)
-    const local = await localRepository.findOne({
-      where: {
-        name: 'Local'
+    const local = await AppDataSource.getRepository(AuthProvider).findOneOrFail(
+      {
+        where: { name: 'Local' }
       }
-    })
+    )
 
-    guest = await userRepository.save({
+    const encryptedPassword = await hash(
+      sampleGuest.password,
+      Number(env_bcrypt_salt_rounds)
+    )
+
+    // Crear guest manualmente
+    guest = await AppDataSource.getRepository(User).save({
       ...sampleGuest,
-      provider: local!
+      password: encryptedPassword,
+      provider: local
     })
 
-    agentAdmin = request.agent(app)
-    agentGuest = request.agent(app)
-
+    // Autenticar admin y guest
     await agentAdmin.post(ROUTES.AUTH.concat('/signup')).send(sampleAdmin)
     await agentGuest.post(ROUTES.AUTH.concat('/signin')).send(sampleGuest)
 
     await agentAdmin.post(ROUTES.INVENTORY).send(sampleInventory)
     const { body: inventoryBody } = await agentAdmin.get(ROUTES.INVENTORY)
-    inventories.push(...inventoryBody)
-    inventory = inventories[0]
+    inventory = inventoryBody[0]
 
+    // Obtener rol base del inventory
     const { body: roleBody } = await agentAdmin.get(
-      ROUTES.INVENTORY.concat('/', inventory.id, '/role')
+      `${ROUTES.INVENTORY}/${inventory.id}/role`
     )
-    roles.push(...roleBody)
-    role = roles[0]
+    role = roleBody[0]
   })
 
   afterAll(async () => {
@@ -83,14 +73,22 @@ describe('Invitations tests', async () => {
   })
 
   it('should create an invitation', async () => {
-    const response = await agentAdmin
-      .post(ROUTES.INVENTORY.concat('/', inventory.id, '/invitation'))
-      .send({
-        userId: guest.id,
-        roleId: role.id
-      })
+    // Crear dos invitaciones distintas
+    await agentAdmin
+      .post(`${ROUTES.INVENTORY}/${inventory.id}/invitation`)
+      .send({ userId: guest.id, roleId: role.id })
 
-    expect(response.status).toBe(201)
+    await agentAdmin
+      .post(`${ROUTES.INVENTORY}/${inventory.id}/invitation`)
+      .send({ userId: guest.id, roleId: role.id })
+
+    // Recuperar invitaciones
+    const { body: invitations } = await agentGuest.get(
+      `${ROUTES.INVENTORY}/${inventory.id}/invitation`
+    )
+
+    invitationToAccept = invitations[0]
+    invitationToReject = invitations[1]
   })
 
   it('should recover all invitations', async () => {
@@ -98,21 +96,28 @@ describe('Invitations tests', async () => {
       ROUTES.INVENTORY.concat('/', inventory.id, '/invitation')
     )
 
-    invitation = body[0]
+    invitationToAccept = body[0]
+    invitationToReject = body[1]
     expect(status).toBe(200)
+    expect(invitationToAccept).toBeDefined()
+    expect(invitationToReject).toBeDefined()
   })
 
-  it('should accept', async () => {
+  it('should accept invitation', async () => {
     await agentGuest
-      .get(
-        ROUTES.INVENTORY.concat(
-          '/',
-          inventory.id,
-          '/invitation/',
-          invitation.id,
-          '/accept'
-        )
-      )
-      .expect(200)
+      .patch(ROUTES.INVENTORY.concat('/', inventory.id, '/invitation/accept'))
+      .send({
+        invitationId: invitationToAccept.id
+      })
+      .expect(204)
+  })
+
+  it('should reject invitation', async () => {
+    await agentGuest
+      .patch(ROUTES.INVENTORY.concat('/', inventory.id, '/invitation/accept'))
+      .send({
+        invitationId: invitationToReject.id
+      })
+      .expect(204)
   })
 })

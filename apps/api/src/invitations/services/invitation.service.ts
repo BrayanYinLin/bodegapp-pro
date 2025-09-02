@@ -1,6 +1,7 @@
 import {
   CreateInvitationDto,
   ResponseInvitationDto,
+  InvitationIdDto,
   ResponseInvitationSchema
 } from '@invitations/entities/dtos/invitation.dto'
 import {
@@ -102,6 +103,86 @@ class InvitationServiceImpl implements InvitationService {
         id: roleId
       },
       status: InvitationStatus.PENDING
+    })
+  }
+
+  async accept({ invitationId }: InvitationIdDto): Promise<void> {
+    const invitation = await this.repository.findOne({
+      where: {
+        id: invitationId
+      },
+      relations: ['userInvited', 'invitedBy', 'inventory', 'role']
+    })
+
+    if (!invitation) {
+      throw new AppError({
+        code: ERROR_NAMES.NOT_FOUND,
+        httpCode: ERROR_HTTP_CODES.NOT_FOUND,
+        message: 'Invitation not found.',
+        isOperational: true
+      })
+    }
+
+    if (invitation.status !== InvitationStatus.PENDING) {
+      throw new AppError({
+        code: ERROR_NAMES.CONFLICT,
+        httpCode: ERROR_HTTP_CODES.CONFLICT,
+        message: 'Invitation has been replied.',
+        isOperational: true
+      })
+    }
+
+    await this.repository
+      .createQueryBuilder()
+      .update(Invitation)
+      .set({ status: InvitationStatus.ACCEPTED })
+      .where('id = :id', { id: invitation.id })
+      .execute()
+
+    await this.memberRepository.save({
+      user: invitation.userInvited,
+      inventory: invitation.inventory,
+      role: invitation.role
+    })
+  }
+
+  async reject({ invitationId }: InvitationIdDto): Promise<void> {
+    const invitation = await this.repository.findOne({
+      where: {
+        id: invitationId
+      },
+      relations: ['userInvited', 'invitedBy', 'inventory', 'role']
+    })
+
+    if (!invitation) {
+      throw new AppError({
+        code: ERROR_NAMES.NOT_FOUND,
+        httpCode: ERROR_HTTP_CODES.NOT_FOUND,
+        message: 'Invitation not found.',
+        isOperational: true
+      })
+    }
+
+    if (invitation.status !== InvitationStatus.PENDING) {
+      throw new AppError({
+        code: ERROR_NAMES.CONFLICT,
+        httpCode: ERROR_HTTP_CODES.CONFLICT,
+        message: 'Invitation has been replied.',
+        isOperational: true
+      })
+    }
+
+    await this.repository
+      .createQueryBuilder()
+      .update(Invitation)
+      .set({ status: InvitationStatus.REJECTED })
+      .where('id = :id', { id: invitation.id })
+      .execute()
+
+    await this.memberRepository.save({
+      user: invitation.userInvited,
+      inventory: invitation.inventory,
+      role: invitation.role
     })
   }
 }

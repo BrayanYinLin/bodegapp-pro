@@ -18,6 +18,7 @@ import { Member } from '@members/entities/member.entity'
 import { Invitation } from '@invitations/entities/invitation.entity'
 import { Movement } from '@movements/entities/movement.entity'
 import { MovementDetail } from '@movements/entities/movement-detail.entity'
+import { WhiteList } from '@auth/entities/white-list.entity'
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
@@ -40,7 +41,8 @@ export const AppDataSource = new DataSource({
     MovementDetail,
     Category,
     Inventory,
-    Product
+    Product,
+    WhiteList
   ],
   migrations: [],
   subscribers: []
