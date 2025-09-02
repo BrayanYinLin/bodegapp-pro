@@ -39,6 +39,7 @@
       "@auth/*": ["./src/components/auth/*"],
       "@authorization/*": ["./src/components/authorization/*"],
       "@shared/*": ["./src/shared/*"],
+      "@tests/*": ["./src/tests/*"],
       "@root/*": ["./src/*"]
     },                                      /* Specify a set of entries that re-map imports to additional lookup locations. */
     // "rootDirs": [],                                   /* Allow multiple folders to be treated as one when resolving modules. */

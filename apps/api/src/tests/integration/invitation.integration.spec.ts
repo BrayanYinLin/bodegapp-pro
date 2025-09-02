@@ -13,8 +13,8 @@ import { User } from '@auth/entities/user.entity'
 import { AuthProvider } from '@auth/entities/auth-provider.entity'
 import { Invitation } from '@invitations/entities/invitation.entity'
 import { app } from '@root/main'
-import { fakeUser } from '@root/tests/utils/factories/fakeUser'
-import { fakeInventory } from '@root/tests/utils/factories/fakeInventory'
+import { fakeUser } from '@root/tests/utils/factories/user.factory'
+import { fakeInventory } from '@root/tests/utils/factories/inventory.factory'
 
 describe('Invitations tests', async () => {
   const agentAdmin = request.agent(app)
