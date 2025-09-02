@@ -44,7 +44,7 @@ describe('Inventory tests', () => {
     agent = request.agent(app)
 
     await agent.post('/api/v1/auth/signup').send(sampleUser)
-  })
+  }, 20000)
 
   afterAll(async () => {
     await AppDataSource.dropDatabase()

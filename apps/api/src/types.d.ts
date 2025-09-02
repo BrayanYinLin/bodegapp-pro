@@ -3,7 +3,7 @@ import {
   FindUserEmailDto,
   LoginUserDto,
   ResponseUserIdDto
-} from './auth/entities/dtos/user.dto'
+} from './components/auth/entities/dtos/user.dto'
 import { Request, Response } from 'express'
 import { Profile } from 'passport-google-oauth20'
 

@@ -3,7 +3,6 @@ import { AuthServiceImpl } from '@auth/services/auth.service'
 import { faker } from '@faker-js/faker'
 import { CreateUserDto, LoginUserDto } from '@auth/entities/dtos/user.dto'
 import { AppDataSource } from '@shared/database/data-source'
-import { User } from '@auth/entities/user.entity'
 import { authSeed } from '@shared/database/provider.seed'
 
 type UserDtos = CreateUserDto | LoginUserDto
@@ -40,16 +39,12 @@ describe('Authentication Services Tests', () => {
 
   beforeAll(async () => {
     await AppDataSource.initialize()
+    await AppDataSource.synchronize()
     await authSeed()
   })
 
   afterAll(async () => {
-    const repository = AppDataSource.getRepository(User)
-
-    await repository.delete({
-      email: dto.email
-    })
-    await AppDataSource.destroy()
+    await AppDataSource.dropDatabase()
   })
 
   it('should sign up user successfully', async () => {
