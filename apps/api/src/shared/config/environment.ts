@@ -1,7 +1,8 @@
 import { join } from 'node:path'
+import { cwd } from 'node:process'
 
-const PATH_ENV = join(__dirname, '../../../../../.env')
-process.loadEnvFile(PATH_ENV)
+const env_path = join(cwd(), '../../.env')
+process.loadEnvFile(env_path)
 
 export const {
   DB_NAME: env_db,

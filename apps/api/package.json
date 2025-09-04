@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc -p tsconfig.build.json",
-    "start": "node dist/index.js",
+    "start": "node --env-file=../../.env.prod dist/index.js",
     "lint": "eslint --fix .",
     "test": "vitest",
     "test:unit": "vitest run src/**/*.spec.ts",
