@@ -5,7 +5,8 @@ import {
   env_user_db,
   env_password_db,
   env_host_db,
-  env_node_env
+  env_node_env,
+  env_port_db
 } from '@shared/config/environment'
 import { User } from '@auth/entities/user.entity'
 import { Role } from '@authorization/entities/role.entity'
@@ -23,7 +24,7 @@ import { WhiteList } from '@auth/entities/white-list.entity'
 export const AppDataSource = new DataSource({
   type: 'postgres',
   host: env_host_db,
-  port: 5432,
+  port: Number(env_port_db),
   username: env_user_db,
   password: env_password_db,
   database: env_db,

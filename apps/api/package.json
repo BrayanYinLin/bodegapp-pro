@@ -4,7 +4,7 @@
   "description": "Bodegapp pro API server",
   "main": "index.js",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "tsx --watch src/index.ts",
     "build": "tsc -p tsconfig.build.json",
     "start": "node --env-file=../../.env.prod dist/index.js",
     "lint": "eslint --fix .",
@@ -14,7 +14,7 @@
     "test:e2e": "vitest run tests/e2e/**/*.spec.ts"
   },
   "keywords": [],
-  "author": "",
+  "author": "Brayan Yin Lin",
   "license": "ISC",
   "packageManager": "pnpm@10.13.1",
   "devDependencies": {

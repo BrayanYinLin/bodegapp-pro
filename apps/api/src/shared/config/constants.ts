@@ -44,7 +44,8 @@ const ROUTES = {
   AUTH: '/api/v1/auth',
   INVENTORY: '/api/v1/inventory',
   INVITATION: '/:inventoryId/invitation',
-  ROLE: '/:inventoryId/role'
+  ROLE: '/:inventoryId/role',
+  PERMISSION: '/api/v1/permission'
 } as const
 
 type Code = (typeof ERROR_NAMES)[keyof typeof ERROR_NAMES]
