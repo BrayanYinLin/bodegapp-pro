@@ -162,6 +162,9 @@ importers:
       '@tanstack/react-router':
         specifier: 1.131.32
         version: 1.131.32(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      axios:
+        specifier: 1.11.0
+        version: 1.11.0
       class-variance-authority:
         specifier: 0.7.1
         version: 0.7.1

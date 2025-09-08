@@ -1,6 +1,6 @@
 import { cva } from 'class-variance-authority'
 
-import { merge } from '@/utils/merge'
+import { merge } from '@/shared/utils/merge'
 import { type ReactNode } from 'react'
 
 const styles = {
