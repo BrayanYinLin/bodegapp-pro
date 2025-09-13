@@ -7,7 +7,7 @@ import {
 import { Request, Response } from 'express'
 import { Profile } from 'passport-google-oauth20'
 
-interface AuthTokens {
+export interface AuthTokens {
   access_token: string
   refresh_token: string
 }
@@ -20,8 +20,9 @@ declare global {
 }
 
 interface AuthService {
-  signup(user: CreateUserDto): Promise<AuthTokens>
+  signup(user: CreateUserDto): Promise<void>
   signin(user: LoginUserDto): Promise<AuthTokens>
+  verifyEmail(code: string): Promise<AuthTokens>
   callbackGoogle(profile: Profile): Promise<AuthTokens>
   findByEmail(user: FindUserEmailDto): Promise<ResponseUserIdDto>
   refresh(token: string): Promise<AuthTokens>
@@ -29,6 +30,11 @@ interface AuthService {
 
 interface AuthController {
   signup(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void>
+  verify(
     req: Request,
     res: Response,
     next: NextFunction

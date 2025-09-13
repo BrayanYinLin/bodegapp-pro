@@ -4,11 +4,12 @@ import { faker } from '@faker-js/faker'
 import { CreateUserDto, LoginUserDto } from '@auth/entities/dtos/user.dto'
 import { AppDataSource } from '@shared/database/data-source'
 import { authSeed } from '@shared/database/provider.seed'
+import { TestEmailService } from './test-email.service'
 
 type UserDtos = CreateUserDto | LoginUserDto
 
 describe('Authentication Services Tests', () => {
-  const service = new AuthServiceImpl()
+  const service = new AuthServiceImpl(new TestEmailService())
 
   const dto: CreateUserDto | LoginUserDto = {
     name: faker.person.fullName(),

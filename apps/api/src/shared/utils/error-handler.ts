@@ -10,6 +10,7 @@ class ErrorHandler {
     req: Request,
     res: Response
   ): Promise<Response | void> {
+    logger.error(err)
     if (err instanceof AppError) {
       return res.status(Number(err.httpCode)).json({
         status: err.httpCode,

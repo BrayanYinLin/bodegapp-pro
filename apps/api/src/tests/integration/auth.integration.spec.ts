@@ -5,6 +5,8 @@ import { AppDataSource } from '@shared/database/data-source'
 import { authSeed, authUnseed } from '@shared/database/provider.seed'
 import { User } from '@auth/entities/user.entity'
 import { passportMock } from '@root/tests/utils/mocks/passport'
+import { once } from 'node:events'
+import { authEmitter } from '@auth/services/test-email.service'
 
 const mockUser = {
   name: faker.person.firstName(),
@@ -43,8 +45,17 @@ describe('Authentication Integration Tests', () => {
       .post('/api/v1/auth/signup')
       .send(mockUser)
 
-    expect(response.status).toBe(201)
+    expect(response.status).toBe(204)
   })
+
+  it('should verify user', async () => {
+    const [{ code }] = await once(authEmitter, 'verification-code')
+    const response = await request(app)
+      .post('/api/v1/auth/verify')
+      .send({ code })
+
+    expect(response.status).toBe(200)
+  }, 10000)
 
   it('should signin as user', async () => {
     const response = await request(app).post('/api/v1/auth/signin').send({

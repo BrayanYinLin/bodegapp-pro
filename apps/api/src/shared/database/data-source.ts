@@ -20,6 +20,7 @@ import { Invitation } from '@invitations/entities/invitation.entity'
 import { Movement } from '@movements/entities/movement.entity'
 import { MovementDetail } from '@movements/entities/movement-detail.entity'
 import { WhiteList } from '@auth/entities/white-list.entity'
+import { AuthenticationCode } from '@auth/entities/authentication-code.entity'
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
@@ -43,7 +44,8 @@ export const AppDataSource = new DataSource({
     Category,
     Inventory,
     Product,
-    WhiteList
+    WhiteList,
+    AuthenticationCode
   ],
   migrations: [],
   subscribers: []

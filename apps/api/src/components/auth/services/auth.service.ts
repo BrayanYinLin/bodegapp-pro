@@ -1,4 +1,6 @@
+import { EmailService } from '@auth/auth'
 import { AuthProvider } from '@auth/entities/auth-provider.entity'
+import { AuthenticationCode } from '@auth/entities/authentication-code.entity'
 import {
   checkSigninUserDto,
   checkSignUpUserDto,
@@ -14,18 +16,24 @@ import { AuthService, AuthTokens } from '@root/types'
 import { ERROR_HTTP_CODES, ERROR_NAMES } from '@shared/config/constants'
 import {
   env_bcrypt_salt_rounds,
+  env_email_sender,
   env_jwt_secret
 } from '@shared/config/environment'
 import { AppDataSource } from '@shared/database/data-source'
 import { AppError } from '@shared/utils/error-factory'
 import { hash, compare } from 'bcrypt'
 import { JwtPayload, verify } from 'jsonwebtoken'
+import { UUID } from 'node:crypto'
 import { Profile } from 'passport'
 
 class AuthServiceImpl implements AuthService {
   constructor(
+    private emailService: EmailService,
     private readonly repo = AppDataSource.getRepository(User),
-    private readonly whiteListRepo = AppDataSource.getRepository(WhiteList)
+    private readonly whiteListRepo = AppDataSource.getRepository(WhiteList),
+    private readonly authenticationCodeRepo = AppDataSource.getRepository(
+      AuthenticationCode
+    )
   ) {}
 
   async signin(user: LoginUserDto): Promise<AuthTokens> {
@@ -68,6 +76,15 @@ class AuthServiceImpl implements AuthService {
       })
     }
 
+    if (!foundUser.validatedAccount) {
+      throw new AppError({
+        code: ERROR_NAMES.AUTHENTICATION,
+        httpCode: 401,
+        message: 'User not validated',
+        isOperational: true
+      })
+    }
+
     const { token: access_token } = accessToken({
       id: foundUser.id
     })
@@ -87,14 +104,23 @@ class AuthServiceImpl implements AuthService {
     }
   }
 
-  async signup(user: CreateUserDto): Promise<AuthTokens> {
+  async signup(user: CreateUserDto): Promise<void> {
+    if (!env_email_sender) {
+      throw new AppError({
+        code: ERROR_NAMES.INTERNAL,
+        httpCode: ERROR_HTTP_CODES.INTERNAL,
+        message: 'email sender not configured',
+        isOperational: false
+      })
+    }
+
     const AuthProviderRepository = AppDataSource.getRepository(AuthProvider)
     const { success, data, error } = checkSignUpUserDto(user)
 
     if (!success || !data) {
       throw new AppError({
-        code: 'VALIDATION_ERROR',
-        httpCode: 400,
+        code: ERROR_NAMES.VALIDATION,
+        httpCode: ERROR_HTTP_CODES.VALIDATION,
         message: 'Invalid user data',
         isOperational: true,
         details: error
@@ -119,31 +145,80 @@ class AuthServiceImpl implements AuthService {
       Number(env_bcrypt_salt_rounds)
     )
 
-    const newUser = await this.repo.save(
-      new User({
-        name: data.name,
-        email: data.email,
-        password: encryptedPassword,
-        provider: local
+    const newUser = await this.repo.save({
+      name: data.name,
+      email: data.email,
+      password: encryptedPassword,
+      provider: local,
+      validatedAccount: false
+    })
+    this.emailService.sendVerificationEmail(env_email_sender, newUser)
+  }
+
+  async verifyEmail(code: UUID): Promise<AuthTokens> {
+    try {
+      const authentication = await this.authenticationCodeRepo.findOne({
+        where: {
+          code: code
+        },
+        relations: ['user']
       })
-    )
 
-    const { token: access_token } = accessToken({
-      id: newUser.id
-    })
+      if (!authentication) {
+        throw new AppError({
+          code: ERROR_NAMES.NOT_FOUND,
+          httpCode: ERROR_HTTP_CODES.NOT_FOUND,
+          isOperational: true,
+          message: 'Code not found'
+        })
+      }
 
-    const { token: refresh_token, payload } = refreshToken({
-      id: newUser.id
-    })
+      await this.repo.update(
+        { id: authentication.user.id },
+        { validatedAccount: true }
+      )
 
-    await this.whiteListRepo.save({
-      jti: payload.jti,
-      sub: payload.sub
-    })
+      const updatedUser = await this.repo.findOne({
+        where: { id: authentication.user.id }
+      })
 
-    return {
-      access_token,
-      refresh_token
+      if (!updatedUser) {
+        throw new AppError({
+          code: ERROR_NAMES.NOT_FOUND,
+          httpCode: ERROR_HTTP_CODES.NOT_FOUND,
+          isOperational: true,
+          message: 'User not found'
+        })
+      }
+
+      if (!updatedUser.validatedAccount) {
+        throw new AppError({
+          code: ERROR_NAMES.AUTHENTICATION,
+          httpCode: ERROR_HTTP_CODES.AUTHENTICATION,
+          isOperational: true,
+          message: 'User not validated'
+        })
+      }
+
+      const { token: access_token } = accessToken({
+        id: updatedUser.id
+      })
+
+      const { token: refresh_token, payload } = refreshToken({
+        id: updatedUser.id
+      })
+
+      await this.whiteListRepo.save({
+        jti: payload.jti,
+        sub: payload.sub
+      })
+
+      return {
+        access_token,
+        refresh_token
+      }
+    } catch (e) {
+      throw new Error((e as Error).message)
     }
   }
 
@@ -187,7 +262,8 @@ class AuthServiceImpl implements AuthService {
       userRecord = await this.repo.save({
         name: profile.displayName,
         email: profile.emails[0].value,
-        provider: googleProvider
+        provider: googleProvider,
+        validatedAccount: true
       })
     }
 

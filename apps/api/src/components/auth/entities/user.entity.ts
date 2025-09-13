@@ -9,6 +9,7 @@ import {
 import { AuthProvider } from './auth-provider.entity'
 import { Member } from '@members/entities/member.entity'
 import { Invitation } from '@invitations/entities/invitation.entity'
+import { AuthenticationCode } from './authentication-code.entity'
 
 @Entity()
 class User {
@@ -24,9 +25,15 @@ class User {
   @Column({ type: 'varchar', length: 255, nullable: true })
   password?: string
 
+  @Column({ type: 'boolean', default: false })
+  validatedAccount: boolean = false
+
   @ManyToOne(() => AuthProvider, { eager: true })
   @JoinColumn({ name: 'provider_id' })
   provider!: AuthProvider
+
+  @OneToMany(() => AuthenticationCode, (verificiation) => verificiation.user)
+  verificationCodes?: AuthenticationCode[]
 
   @OneToMany(() => Member, (member) => member.user, {
     nullable: true

@@ -10,11 +10,13 @@ export function setAuthCookies(
     .cookie('access_token', accessToken, {
       httpOnly: true,
       maxAge: TOKEN_PARAMS.AT_DURATION * 1000,
-      sameSite: 'lax'
+      sameSite: 'lax',
+      path: '/'
     })
     .cookie('refresh_token', refreshToken, {
       httpOnly: true,
       maxAge: TOKEN_PARAMS.RT_DURATION * 1000,
-      sameSite: 'lax'
+      sameSite: 'lax',
+      path: '/'
     })
 }

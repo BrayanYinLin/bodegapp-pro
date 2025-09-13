@@ -38,14 +38,28 @@ class AuthCtrl implements AuthController {
   ): Promise<Response | void> {
     try {
       const user = req.body as CreateUserDto
-      const { access_token, refresh_token } =
-        await this.authService.signup(user)
+      await this.authService.signup(user)
 
-      return setAuthCookies(res, access_token, refresh_token).status(201).json({
-        message: 'Signed up successfully'
-      })
+      return res.status(204).end()
     } catch (error) {
       next(error)
+    }
+  }
+
+  async verify(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> {
+    try {
+      const { access_token, refresh_token } =
+        await this.authService.verifyEmail(req.body.code)
+
+      return setAuthCookies(res, access_token, refresh_token).status(200).json({
+        message: 'Signed in successfully'
+      })
+    } catch (e) {
+      next(e)
     }
   }
 

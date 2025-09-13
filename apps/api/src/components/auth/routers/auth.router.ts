@@ -6,6 +6,10 @@ import passport from 'passport'
 import { validateMiddleware } from '@shared/middleware/validation-middleware'
 import { FindUserEmailSchema } from '@auth/entities/dtos/user.dto'
 import { checkAccessMiddleware } from '@shared/middleware/check-access-middleware'
+import { TestEmailService } from '@auth/services/test-email.service'
+import { env_node_env } from '@shared/config/environment'
+import { ResendService } from '@auth/services/resend.service'
+import { VerifyEmailCodeSchema } from '@auth/entities/dtos/authentication-code.dto'
 
 const createAuthRouter = (controller: AuthController) => {
   const authRouter = Router()
@@ -20,6 +24,11 @@ const createAuthRouter = (controller: AuthController) => {
     controller.callback.bind(controller)
   )
   authRouter.post('/signup', controller.signup.bind(controller))
+  authRouter.post(
+    '/verify',
+    validateMiddleware(VerifyEmailCodeSchema),
+    controller.verify.bind(controller)
+  )
   authRouter.post('/signin', controller.signin.bind(controller))
   authRouter.get('/logout', controller.logout.bind(controller))
   authRouter.post(
@@ -32,8 +41,14 @@ const createAuthRouter = (controller: AuthController) => {
   return authRouter
 }
 
+const emailService = () => {
+  return env_node_env === 'development'
+    ? new TestEmailService()
+    : new ResendService()
+}
+
 const authenticationRouter = createAuthRouter(
-  new AuthCtrl(new AuthServiceImpl())
+  new AuthCtrl(new AuthServiceImpl(emailService()))
 )
 
 export { authenticationRouter }
