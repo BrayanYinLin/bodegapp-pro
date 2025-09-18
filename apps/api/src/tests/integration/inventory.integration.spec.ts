@@ -10,6 +10,7 @@ import {
   ResponseInventorySchema
 } from '@inventories/entities/dtos/inventory.dto'
 import { ROUTES } from '@shared/config/constants'
+import { waitForVerificationCode } from '@tests/utils/factories/user.factory'
 
 const sampleUser = {
   name: faker.person.firstName(),
@@ -43,7 +44,9 @@ describe('Inventory tests', () => {
     app = module.app
     agent = request.agent(app)
 
-    await agent.post('/api/v1/auth/signup').send(sampleUser)
+    await agent.post(ROUTES.AUTH.concat('/signup')).send(sampleUser)
+    const code = await waitForVerificationCode()
+    await agent.post(ROUTES.AUTH.concat('/verify')).send({ code })
   }, 20000)
 
   afterAll(async () => {
