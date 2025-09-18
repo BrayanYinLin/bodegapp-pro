@@ -37,6 +37,7 @@ describe('Authentication Integration Tests', () => {
     await repository.deleteAll()
 
     await authUnseed()
+    await AppDataSource.dropDatabase()
     await AppDataSource.destroy()
   })
 

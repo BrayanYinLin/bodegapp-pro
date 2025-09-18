@@ -10,11 +10,14 @@ import { env_bcrypt_salt_rounds } from '@shared/config/environment'
 import { ResponseInventoryDto } from '@inventories/entities/dtos/inventory.dto'
 import { ResponseRoleDto } from '@authorization/entities/dtos/role.dto'
 import { User } from '@auth/entities/user.entity'
-import { AuthProvider } from '@auth/entities/auth-provider.entity'
 import { Invitation } from '@invitations/entities/invitation.entity'
 import { app } from '@root/main'
-import { fakeUser } from '@root/tests/utils/factories/user.factory'
+import {
+  fakeUser,
+  waitForVerificationCode
+} from '@root/tests/utils/factories/user.factory'
 import { fakeInventory } from '@root/tests/utils/factories/inventory.factory'
+import { AuthProvider } from '@auth/entities/auth-provider.entity'
 
 describe('Invitations tests', async () => {
   const agentAdmin = request.agent(app)
@@ -35,6 +38,10 @@ describe('Invitations tests', async () => {
     await AppDataSource.synchronize()
     await authSeed()
 
+    await agentAdmin.post('/api/v1/auth/signup').send(sampleAdmin)
+    const adminCode = await waitForVerificationCode()
+    await agentAdmin.post('/api/v1/auth/verify').send({ code: adminCode })
+
     const local = await AppDataSource.getRepository(AuthProvider).findOneOrFail(
       {
         where: { name: 'Local' }
@@ -50,14 +57,16 @@ describe('Invitations tests', async () => {
     guest = await AppDataSource.getRepository(User).save({
       ...sampleGuest,
       password: encryptedPassword,
-      provider: local
+      provider: local,
+      validatedAccount: true
     })
 
-    // Autenticar admin y guest
-    await agentAdmin.post(ROUTES.AUTH.concat('/signup')).send(sampleAdmin)
-    await agentGuest.post(ROUTES.AUTH.concat('/signin')).send(sampleGuest)
-
     await agentAdmin.post(ROUTES.INVENTORY).send(sampleInventory)
+    await agentGuest.post(ROUTES.AUTH.concat('/signin')).send({
+      email: sampleGuest.email,
+      password: sampleGuest.password
+    })
+
     const { body: inventoryBody } = await agentAdmin.get(ROUTES.INVENTORY)
     inventory = inventoryBody[0]
 
