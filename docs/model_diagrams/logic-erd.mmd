@@ -1,0 +1,118 @@
+erDiagram
+    direction TB
+
+    USER }|--|| AUTHENTICATION_PROVIDER : use
+    USER ||--o{ MEMBER: be
+    USER ||--o{ INVITATION: has
+    USER ||--o{ AUTHENTICATION_CODE: has
+    USER {
+      uuid user_id PK
+      varchar name
+      varchar email UK
+      varchar password
+      boolean validatedAccount
+      boolean state
+      uuid provider_id FK
+      timestamp createdAt
+      timestamp updatedAt
+    }
+
+    AUTHENTICATION_PROVIDER {
+      uuid authentication_provider PK
+      varchar name
+    }
+
+    AUTHENTICATION_CODE {
+      uuid authentication_code_id PK
+      uuid code UK
+      enum purpose
+      uuid user_id
+      timestamp createdAt
+      timestamp updatedAt
+    }
+    %% WHITE_LIST
+    
+    MEMBER }|--|| INVENTORY : has
+    MEMBER }|--|| ROLE : has
+    MEMBER {
+      uuid user_id FK
+      uuid inventory_id FK
+      uuid role_id FK
+      boolean state
+      timestamp joinDate
+      timestamp createdAt
+      timestamp updatedAt
+    }
+    
+    INVITATION }o--|| INVENTORY: refers
+    INVITATION }o--|| ROLE: has
+    INVITATION {
+      uuid user_invited FK
+      uuid invited_by FK
+      uuid inventory_id FK
+      uudi role_id FK
+      enum status
+      timestamp createdAt
+    }
+
+    INVENTORY ||--o{ PRODUCT : contains
+    INVENTORY {
+      uuid inventory_id PK
+      varchar name
+      varchar description
+      timestamp createdAt
+      timestamp updatedAt
+    }
+    
+    ROLE }o--|{ PERMISSION: has
+    ROLE {
+      uudi role_id PK
+      varchar name
+      boolean state
+    }
+
+    PERMISSION {
+      uuid permission_id
+      varchar description
+    }
+
+    PRODUCT }|--|| CATEGORY: has
+    PRODUCT }|--|| MOVEMENT_DETAIL: includes
+    PRODUCT {
+      uuid product_id PK
+      varchar name
+      int quantity
+      boolean state
+      uuid inventory_id
+      timestamp createdAt
+      timestamp updatedAt
+    }
+
+    CATEGORY {
+      uuid category_id
+      varchar name
+      varchar description
+      boolean state
+      timestamp createdAt
+      timestamp updatedAt
+    }
+
+    MOVEMENT }o--|| MEMBER: log
+    MOVEMENT ||--o{ MOVEMENT_DETAIL: has
+    MOVEMENT ||--|| INVENTORY: refers
+    MOVEMENT {
+      uuid movement_id PK
+      decimal total
+      timestamp date
+      timestamp createdAt
+      timestamp updatedAt
+    }
+
+    MOVEMENT_DETAIL {
+      uuid movement_id
+      uuid product_id
+      decimal price
+      int quantity
+      timestamp createdAt
+      timestamp updatedAt
+    }

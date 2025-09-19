@@ -1,0 +1,16 @@
+---
+title: Create inventory sequence
+---
+
+sequenceDiagram
+  actor user as User
+  participant app as App
+  participant api as API
+  participant db as Database
+
+  user->>app: Enter inventory data
+  app-->>api: POST /api/v1/inventory { name, description } + Cookies
+  api-->>db: Create inventory
+  db-->>api: Result
+  api-->>app: 201 Created + Cookies JWT
+  app->>user: Show inventory

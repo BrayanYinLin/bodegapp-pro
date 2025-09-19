@@ -1,0 +1,38 @@
+erDiagram
+    direction TB
+
+    USER }|--|| AUTHENTICATION_PROVIDER : use
+    USER ||--o{ MEMBER: be
+    USER ||--o{ INVITATION: has
+    USER ||--o{ AUTHENTICATION_CODE: has
+    USER
+
+    AUTHENTICATION_PROVIDER
+    AUTHENTICATION_CODE
+    %% WHITE_LIST
+    
+    MEMBER }|--|| INVENTORY : has
+    MEMBER }|--|| ROLE : has
+    MEMBER
+    
+    INVITATION }o--|| INVENTORY: refers
+    INVITATION
+
+    INVENTORY ||--o{ PRODUCT : contains
+    INVENTORY
+    
+    ROLE }o--|{ PERMISSION: has
+    ROLE
+
+    PERMISSION
+
+    PRODUCT }|--|| CATEGORY: has
+    PRODUCT
+    CATEGORY
+
+    INVENTORY_MOVEMENT }o--|| MEMBER: log
+    INVENTORY_MOVEMENT ||--o{ MOVEMENT_DETAIL: has
+    INVENTORY_MOVEMENT ||--|| INVENTORY: refers
+    INVENTORY_MOVEMENT
+
+    MOVEMENT_DETAIL

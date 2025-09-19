@@ -1,0 +1,23 @@
+---
+title: Login sequence
+---
+
+sequenceDiagram
+  actor user as User
+  participant app
+  participant api as API
+  participant db as Database
+
+  user->>app: Enter login data
+  app->>api: POST /api/v1/auth/signin { email, password }
+  api-->>db: Query user data
+  db-->>api: Result data
+  api->>api: Verify password
+  alt Login successful
+    api-->>app: 200 OK + Cookies JWT
+    app->>user: Access into platform
+  else Password wrong
+    api-->>app: 401 Unauthorized
+    app->>user: Show wrong password message
+  end
+
