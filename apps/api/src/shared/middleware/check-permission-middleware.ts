@@ -2,18 +2,17 @@ import { decodeAccess } from '@inventories/lib/decode-access'
 import { ERROR_HTTP_CODES, ERROR_NAMES } from '@shared/config/constants'
 import { GrantedPermission } from '@shared/database/role.seed'
 import { AppError } from '@shared/utils/error-factory'
+import { userHasPermission } from '@shared/utils/user-has-permission'
 import { NextFunction, Request, Response } from 'express'
 
 export const checkPermission = (permission: GrantedPermission) => {
   return (req: Request, _: Response, next: NextFunction) => {
     try {
-      const { role } = decodeAccess(req.cookies.access_inventory)
+      const payload = decodeAccess(req.cookies.access_inventory)
 
-      const grantedAction = role.permissions.findIndex(
-        ({ description }) => description === permission
-      )
+      const grantedAction = userHasPermission(payload, permission)
 
-      if (grantedAction === -1) {
+      if (!grantedAction) {
         throw new AppError({
           code: ERROR_NAMES.FORBIDDEN,
           httpCode: ERROR_HTTP_CODES.FORBIDDEN,
