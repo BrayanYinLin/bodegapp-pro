@@ -1,5 +1,6 @@
 import { CookieOptions } from 'express'
 import { env_node_env } from './environment'
+import { Algorithm } from 'jsonwebtoken'
 
 const ERROR_NAMES = {
   NOT_FOUND: 'NOT_FOUND_ERROR', // Recurso no encontrado
@@ -36,10 +37,19 @@ const TOKEN_PARAMS = {
   IAT_DURATION: 60 * 60 * 4 // 4 horas
 }
 
+const ALGORITHM: Algorithm = 'RS256'
+
 const COOKIE_PARAMS: CookieOptions = {
   httpOnly: true,
   sameSite: 'lax',
-  secure: env_node_env === 'PRODUCTION'
+  secure: env_node_env === 'production'
+} as const
+
+const COOKIE_NAMES = {
+  ACCESS_TOKEN: 'access_token',
+  REFRESH_TOKEN: 'refresh_token',
+  INVENTORY_ACCESS: 'access_inventory',
+  INVENTORY_REFRESH: 'refresh_inventory'
 } as const
 
 const ROUTES = {
@@ -59,8 +69,10 @@ export {
   EXPIRATION_EMAIL_CODE,
   RATE_LIMITER_PARAMS,
   TOKEN_PARAMS,
+  ALGORITHM,
   ROUTES,
   COOKIE_PARAMS,
+  COOKIE_NAMES,
   Code,
   HttpCode
 }

@@ -1,5 +1,5 @@
 import { User } from '@auth/entities/user.entity'
-import { ERROR_NAMES, TOKEN_PARAMS } from '@shared/config/constants'
+import { ALGORITHM, ERROR_NAMES, TOKEN_PARAMS } from '@shared/config/constants'
 import { env_jwt_secret } from '@shared/config/environment'
 import { AppError } from '@shared/utils/error-factory'
 import { sign } from 'jsonwebtoken'
@@ -35,7 +35,7 @@ const accessToken = ({ id }: UserIdDto): AccessTokenDto => {
   }
 
   const token = sign(payload, env_jwt_secret, {
-    algorithm: 'HS256',
+    algorithm: ALGORITHM,
     expiresIn: TOKEN_PARAMS.AT_DURATION
   })
 
@@ -61,7 +61,7 @@ const refreshToken = ({ id }: UserIdDto): RefreshTokenDto => {
   }
 
   const token = sign(payload, env_jwt_secret, {
-    algorithm: 'HS256',
+    algorithm: ALGORITHM,
     expiresIn: TOKEN_PARAMS.RT_DURATION
   })
 

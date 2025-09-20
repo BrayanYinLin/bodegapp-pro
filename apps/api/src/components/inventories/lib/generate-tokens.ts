@@ -1,5 +1,6 @@
 import { sign } from 'jsonwebtoken'
 import {
+  ALGORITHM,
   ERROR_HTTP_CODES,
   ERROR_NAMES,
   TOKEN_PARAMS
@@ -34,7 +35,7 @@ const generateInventoryAccessToken = (payload: MemberPayloadDto) => {
   }
 
   const token = sign(data, env_jwt_secret, {
-    algorithm: 'HS256',
+    algorithm: ALGORITHM,
     expiresIn: TOKEN_PARAMS.AT_DURATION
   })
 
@@ -57,7 +58,7 @@ const generateInventoryRefreshToken = (member: MemberPayloadDto) => {
   }
 
   const token = sign(payload, env_jwt_secret, {
-    algorithm: 'HS256',
+    algorithm: ALGORITHM,
     expiresIn: TOKEN_PARAMS.AT_DURATION
   })
 
