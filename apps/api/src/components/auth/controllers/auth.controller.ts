@@ -6,7 +6,11 @@ import {
 import { setAuthCookies } from '@auth/lib/set-auth-cookie'
 import { AuthServiceImpl } from '@auth/services/auth.service'
 import { AuthController } from '@root/types'
-import { ERROR_HTTP_CODES, ERROR_NAMES } from '@shared/config/constants'
+import {
+  COOKIE_NAMES,
+  ERROR_HTTP_CODES,
+  ERROR_NAMES
+} from '@shared/config/constants'
 import { AppError } from '@shared/utils/error-factory'
 import { NextFunction, Request, Response } from 'express'
 
@@ -65,8 +69,8 @@ class AuthCtrl implements AuthController {
 
   async logout(_: Request, res: Response): Promise<Response> {
     return res
-      .clearCookie('access_token')
-      .clearCookie('refresh_token')
+      .clearCookie(COOKIE_NAMES.ACCESS_TOKEN)
+      .clearCookie(COOKIE_NAMES.REFRESH_TOKEN)
       .status(200)
       .json({ message: 'Logout successfully' })
   }

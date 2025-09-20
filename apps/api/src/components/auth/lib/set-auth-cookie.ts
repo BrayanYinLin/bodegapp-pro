@@ -1,5 +1,5 @@
 import { Response } from 'express'
-import { TOKEN_PARAMS } from '@shared/config/constants'
+import { COOKIE_NAMES, TOKEN_PARAMS } from '@shared/config/constants'
 
 export function setAuthCookies(
   res: Response,
@@ -7,13 +7,13 @@ export function setAuthCookies(
   refreshToken: string
 ) {
   return res
-    .cookie('access_token', accessToken, {
+    .cookie(COOKIE_NAMES.ACCESS_TOKEN, accessToken, {
       httpOnly: true,
       maxAge: TOKEN_PARAMS.AT_DURATION * 1000,
       sameSite: 'lax',
       path: '/'
     })
-    .cookie('refresh_token', refreshToken, {
+    .cookie(COOKIE_NAMES.REFRESH_TOKEN, refreshToken, {
       httpOnly: true,
       maxAge: TOKEN_PARAMS.RT_DURATION * 1000,
       sameSite: 'lax',

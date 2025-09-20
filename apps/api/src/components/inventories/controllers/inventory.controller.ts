@@ -2,7 +2,12 @@ import { CreateInventoryDto } from '@inventories/entities/dtos/inventory.dto'
 import { InventoryController } from '@inventories/inventory'
 import { decodeAccess } from '@inventories/lib/decode-access'
 import { InventoryServiceImpl } from '@inventories/services/inventory.service'
-import { COOKIE_PARAMS, ROUTES, TOKEN_PARAMS } from '@shared/config/constants'
+import {
+  COOKIE_NAMES,
+  COOKIE_PARAMS,
+  ROUTES,
+  TOKEN_PARAMS
+} from '@shared/config/constants'
 import { decodeUser } from '@shared/utils/decode-user'
 import { NextFunction, Request, Response } from 'express'
 
@@ -37,12 +42,12 @@ export class InventoryCtrl implements InventoryController {
       })
 
       return res
-        .cookie('access_inventory', tokens.access_inventory, {
+        .cookie(COOKIE_NAMES.INVENTORY_ACCESS, tokens.access_inventory, {
           ...COOKIE_PARAMS,
           maxAge: TOKEN_PARAMS.IAT_DURATION * 1000,
           path: ROUTES.INVENTORY.concat('/', inventory.id)
         })
-        .cookie('refresh_inventory', tokens.refresh_inventory, {
+        .cookie(COOKIE_NAMES.INVENTORY_REFRESH, tokens.refresh_inventory, {
           ...COOKIE_PARAMS,
           maxAge: TOKEN_PARAMS.IAT_DURATION * 1000,
           path: ROUTES.INVENTORY.concat('/', inventory.id)
@@ -88,12 +93,12 @@ export class InventoryCtrl implements InventoryController {
       })
 
       return res
-        .cookie('access_inventory', tokens.access_inventory, {
+        .cookie(COOKIE_NAMES.INVENTORY_ACCESS, tokens.access_inventory, {
           ...COOKIE_PARAMS,
           maxAge: TOKEN_PARAMS.IAT_DURATION * 1000,
           path: ROUTES.INVENTORY.concat('/', inventory.id)
         })
-        .cookie('refresh_inventory', tokens.refresh_inventory, {
+        .cookie(COOKIE_NAMES.INVENTORY_REFRESH, tokens.refresh_inventory, {
           ...COOKIE_PARAMS,
           maxAge: TOKEN_PARAMS.IAT_DURATION * 1000,
           path: ROUTES.INVENTORY.concat('/', inventory.id)
