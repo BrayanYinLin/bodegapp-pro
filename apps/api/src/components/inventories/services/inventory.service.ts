@@ -138,7 +138,10 @@ export class InventoryServiceImpl implements InventoryService {
         id: member.id
       },
       inventory: member.inventory,
-      role: member.role
+      role: {
+        name: member.role.name,
+        permissions: member.role.permissions
+      }
     })
 
     const refresh = generateInventoryRefreshToken({
@@ -147,7 +150,10 @@ export class InventoryServiceImpl implements InventoryService {
         id: member.id
       },
       inventory: member.inventory,
-      role: member.role
+      role: {
+        name: member.role.name,
+        permissions: member.role.permissions
+      }
     })
 
     const { data, success, error } =
