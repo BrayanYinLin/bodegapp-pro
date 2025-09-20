@@ -1,8 +1,11 @@
+import { envSchema } from '@shared/utils/validate-env'
 import { join } from 'node:path'
 import { cwd } from 'node:process'
 
 const env_path = join(cwd(), '../../.env')
 process.loadEnvFile(env_path)
+
+const env = envSchema.parse(process.env)
 
 export const {
   DB_NAME: env_db,
@@ -16,9 +19,9 @@ export const {
   ENVIRONMENT: env_node_env,
   EMAIL_SENDER: env_email_sender,
   RESEND_SECRET: env_resend_secret,
-  API_BASE_URL: env_api_base_url,
+  API_BASE: env_api_base_url,
   GOOGLE_CLIENT: env_google_client,
   GOOGLE_SECRET: env_google_secret,
   GOOGLE_CALLBACK: env_google_callback,
   BCRYPT_SALT_ROUNDS: env_bcrypt_salt_rounds
-} = process.env
+} = env
