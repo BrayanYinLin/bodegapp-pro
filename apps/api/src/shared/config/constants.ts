@@ -37,7 +37,7 @@ const TOKEN_PARAMS = {
   IAT_DURATION: 60 * 60 * 4 // 4 horas
 }
 
-const ALGORITHM: Algorithm = 'RS256'
+const ALGORITHM: Algorithm = 'HS256'
 
 const COOKIE_PARAMS: CookieOptions = {
   httpOnly: true,
