@@ -1,0 +1,31 @@
+sequenceDiagram
+  actor User
+  participant App
+  participant API
+  participant DB
+
+  User->>App: Click "Create Role"
+  App->>API: GET /permissions
+  API->>DB: Query permissions
+  DB-->>API: Return permissions
+  API-->>App: 200 OK + permissions
+  App->>User: Show modal
+  User->>App: Select permissions + create
+  App->>API: POST /:inventoryId/roles {name, permissions} + JWT
+  API->>API: Verify JWT
+
+  alt JWT invalid
+    API-->>App: 401 Unauthorized
+    App->>User: Redirect to login
+  else JWT valid
+    API->>API: Check permission to create role
+    alt Permission denied
+      API-->>App: 403 Forbidden
+      App->>User: Show forbidden message
+    else Permission granted
+      API->>DB: Insert new role
+      DB-->>API: Confirmation
+      API-->>App: 201 Created
+      App->>User: Show success message
+    end
+  end

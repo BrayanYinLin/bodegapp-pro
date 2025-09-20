@@ -1,0 +1,24 @@
+flowchart TD
+  subgraph Entrada
+    A[User clicks Create Role] --> B[POST /api/v1/roles]
+    B --> C[Cookies: access_inventory]
+    B --> D["Body: { name, permissions }"]
+  end
+
+  subgraph Middlewares
+    C --> E[Auth Middleware: Verify JWT]
+    E -->|Invalid| F[Return 401 Unauthorized]
+    D --> G[Validation Middleware: Check body schema]
+    G -->|Invalid| H[Return 400 Bad Request]
+  end
+
+  subgraph Lógica de Negocio
+    E --> I[Check user permissions]
+    I -->|No permission| J[Return 403 Forbidden]
+    I -->|Has permission| K[Insert role into DB]
+    K --> L[Return 201 Created]
+  end
+
+  subgraph Salida
+    L --> M[Frontend shows success message]
+  end
