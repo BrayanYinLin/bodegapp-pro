@@ -155,7 +155,3 @@ Este proyecto es un monorepo gestionado con pnpm workspaces, dividido en dos apl
 - **Despliegue**: Docker y Railway
 
 ---
-
-## Contribuciones
-
-Por favor, lee [CONTRIBUTING.md](CONTRIBUTING.md) para obtener detalles sobre nuestro código de conducta y el proceso para enviarnos pull requests.
