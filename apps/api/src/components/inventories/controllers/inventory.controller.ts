@@ -53,7 +53,7 @@ export class InventoryCtrl implements InventoryController {
           path: ROUTES.INVENTORY.concat('/', inventory.id)
         })
         .status(201)
-        .json({ message: 'Inventory created successfully.' })
+        .json(inventory)
     } catch (e) {
       next(e)
     }

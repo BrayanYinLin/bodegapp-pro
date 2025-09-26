@@ -5,6 +5,24 @@ import { Request, Response, NextFunction } from 'express'
 class RoleCtrl implements RoleController {
   constructor(private readonly roleService = new RoleServiceImpl()) {}
 
+  async create(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response | void> {
+    try {
+      const { inventoryId } = req.params
+      await this.roleService.create({
+        inventoryId: inventoryId,
+        roleDto: req.body
+      })
+
+      return res.status(201).json({ message: 'Role created successfully' })
+    } catch (e) {
+      next(e)
+    }
+  }
+
   async findAllByInventory(
     req: Request,
     res: Response,

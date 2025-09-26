@@ -12,6 +12,11 @@ const createRoleRouter = (controller: RoleController) => {
     checkPermission(PERMISSIONS.READ_ROLE),
     controller.findAllByInventory.bind(controller)
   )
+  router.post(
+    '/',
+    checkPermission(PERMISSIONS.CREATE_ROLE),
+    controller.create.bind(controller)
+  )
 
   return router
 }

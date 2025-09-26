@@ -14,6 +14,18 @@ export const ResponseRoleSchema = z.object({
   name: z.string()
 })
 
+export const CreateRolePermissionSchema = z.object({
+  id: z.uuid(),
+  description: z.string('Description is require')
+})
+
+export const CreateRoleSchema = z.object({
+  name: z.string('Name is required'),
+  permissions: z.array(CreateRolePermissionSchema)
+})
+
+export type CreateRoleDto = z.infer<typeof CreateRoleSchema>
+
 export type ResponseRoleDto = z.infer<typeof ResponseRoleSchema>
 
 export type RolePayload = z.infer<typeof RoleTokenSchema>

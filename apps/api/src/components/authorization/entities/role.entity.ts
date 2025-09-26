@@ -1,11 +1,14 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToMany,
   ManyToOne,
   OneToMany,
-  PrimaryGeneratedColumn
+  PrimaryGeneratedColumn,
+  UpdateDateColumn
 } from 'typeorm'
 import { Permission } from './permission.entity'
 import { Member } from '@members/entities/member.entity'
@@ -30,20 +33,17 @@ class Role {
   invitations?: Invitation
 
   @ManyToOne(() => Inventory, (inventory) => inventory.roles)
+  @JoinColumn({ name: 'inventory_id' })
   inventory!: Inventory
 
   @ManyToMany(() => Permission, (permission) => permission.roles)
   @JoinTable({ name: 'role_permission' })
   permissions!: Permission[]
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn()
   createdAt?: Date
 
-  @Column({
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
-    onUpdate: 'CURRENT_TIMESTAMP'
-  })
+  @UpdateDateColumn()
   updatedAt?: Date
 }
 
